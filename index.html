@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Meu Município na Primeira Infância</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Diagnóstico da Primeira Infância</h1>
+    <p>Envie a planilha preenchida para visualizar o diagnóstico automático.</p>
+
+    <input type="file" id="fileInput" accept=".xlsx, .xls">
+    <div id="output"></div>
+  </div>
+
+  <!-- SheetJS -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
