@@ -85,6 +85,43 @@ function handleFile(e) {
     setSinal("sinal-gpte-0a6", percGPTE0a6, { red: 40, yellow: 20 });
 
     const percTrabalhoInfantil = setPercent("perc-fam-7a15-trabalho-infantil", row["fam-7a15-trabalho-infantil"], totalFam);
+    const interpretacoes = [];
+
+if (perc0a6 >= 30) {
+  interpretacoes.push("⚠️ Atenção: este município possui uma proporção significativa de famílias com crianças de 0 a 6 anos no Cadastro Único. Isso indica alta demanda potencial por serviços voltados à primeira infância.");
+}
+
+if (percDesatualizados >= 25) {
+  interpretacoes.push("⚠️ O percentual de cadastros desatualizados está elevado. Recomenda-se a realização de um mutirão de atualização e estratégias de busca ativa.");
+}
+
+if (percForaEscola0a6 >= 40) {
+  interpretacoes.push("🛑 Alta proporção de crianças de 0 a 6 anos fora da escola. É essencial fortalecer a articulação com a Secretaria de Educação para garantir o acesso à creche e pré-escola.");
+}
+
+if (percSemOcupado >= 15 || percSemEmpregado >= 15) {
+  interpretacoes.push("🔎 Muitas famílias com crianças pequenas vivem sem um adulto ocupado ou empregado. Estratégias de fortalecimento da parentalidade e acesso à rede de proteção devem ser priorizadas.");
+}
+
+if (percPCDCuidados >= 20) {
+  interpretacoes.push("🧩 Há um número elevado de famílias com crianças pequenas e pessoas com deficiência que necessitam de cuidados. É fundamental articular ações intersetoriais e apoio específico a essas famílias.");
+}
+
+if (percGPTE >= 50 || percGPTE0a6 >= 40) {
+  interpretacoes.push("🌍 A presença de famílias em áreas com Grandes Problemas de Território e Exclusão (GPTE) é significativa. As ações devem considerar vulnerabilidades territoriais e estratégias de busca ativa.");
+}
+
+if (percTrabalhoInfantil >= 5) {
+  interpretacoes.push("🚨 Há indícios relevantes de trabalho infantil entre crianças de 7 a 15 anos. É necessário acionar a rede de proteção e o sistema de garantia de direitos.");
+}
+
+// Mostrar as interpretações no HTML
+document.getElementById("interpretacao-bloco-1").innerHTML = `
+  <h3>Leitura orientada dos dados:</h3>
+  <ul>
+    ${interpretacoes.map(txt => `<li>${txt}</li>`).join("")}
+  </ul>
+`;
     setSinal("sinal-trabalho-infantil", percTrabalhoInfantil, { red: 10, yellow: 5 });
   };
 
