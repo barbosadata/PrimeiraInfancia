@@ -136,22 +136,22 @@ function handleFile(e) {
     const perc0a6Rural = totalFam0a6 > 0 ? ((totalFamRural / totalFam0a6) * 100).toFixed(1) : '—';
     const percDesatualizadosFinal = percDesatualizados?.toFixed(1) ?? '—';
 
-    document.getElementById('resumo-bloco-1').innerHTML = `
-      <p>No município de <strong>${nomeMunicipio}</strong>, há um total de <strong>${totalFam0a6}</strong> famílias com crianças de 0 a 6 anos inseridas no Cadastro Único 
-      (<em>${perc0a6Texto}% das famílias registradas</em> — Fonte: Cadastro Único).</p>
-
-      <p>Dessas, <strong>${totalFamRural}</strong> vivem em áreas rurais 
-      (<em>${perc0a6Rural}%</em>) e <strong>${totalFamGPTE0a6}</strong> pertencem a Grupos Populacionais Tradicionais e Específicos - GPTE 
-      (<em>${perc0a6GPTE}%</em> — Fonte: Cadastro Único).</p>
-
-      <p>Além disso, <strong>${percDesatualizadosFinal}%</strong> das famílias estão com o cadastro desatualizado 
-      (Fonte: Cadastro Único / Prontuário SUAS).</p>
-    `;
-
     document.getElementById("interpretacao-bloco-1").innerHTML = `
-      <h3>Leitura orientada dos dados:</h3>
-      <ul>${interpretacoes.map(txt => `<li>${txt}</li>`).join("")}</ul>
-    `;
+  <div id="resumo-bloco-1" class="resumo-dinamico">
+    <p>No município de <strong>${nomeMunicipio}</strong>, há um total de <strong>${totalFam0a6}</strong> famílias com crianças de 0 a 6 anos inseridas no Cadastro Único 
+    (<em>${perc0a6Texto}% das famílias registradas</em> — Fonte: Cadastro Único).</p>
+
+    <p>Dessas, <strong>${totalFamRural}</strong> vivem em áreas rurais 
+    (<em>${perc0a6Rural}%</em>) e <strong>${totalFamGPTE0a6}</strong> pertencem a Grupos Populacionais Tradicionais e Específicos - GPTE 
+    (<em>${perc0a6GPTE}%</em> — Fonte: Cadastro Único).</p>
+
+    <p>Além disso, <strong>${percDesatualizadosFinal}%</strong> das famílias estão com o cadastro desatualizado 
+    (Fonte: Cadastro Único / Prontuário SUAS).</p>
+  </div>
+
+  <h3>Leitura orientada dos dados:</h3>
+  <ul>${interpretacoes.map(txt => `<li>${txt}</li>`).join("")}</ul>
+`;
   };
 
   reader.readAsArrayBuffer(file);
