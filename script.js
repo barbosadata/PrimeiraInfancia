@@ -143,7 +143,6 @@ const perc0a6Rural = totalFam0a6 > 0 ? ((totalFamRural / totalFam0a6) * 100).toF
 
 const totalFamGPTE0a6 = row["fam-gpte-0a6"] ?? 0;
 const perc0a6GPTE = totalFam0a6 > 0 ? ((totalFamGPTE0a6 / totalFam0a6) * 100).toFixed(1) : '—';
-const totalFamRural = row["fam-rural"] ?? 0;
 
 const percDesatualizadosFinal = percDesatualizados?.toFixed(1) ?? '—';
 
