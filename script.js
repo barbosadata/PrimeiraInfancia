@@ -151,7 +151,9 @@ document.getElementById('resumo-bloco-1').innerHTML = `
   <p>No município de <strong>${nomeMunicipio}</strong>, há um total de <strong>${totalFam0a6}</strong> famílias com crianças de 0 a 6 anos inseridas no Cadastro Único 
   (<em>${perc0a6}% das famílias registradas</em> — Fonte: Cadastro Único).</p>
   
-  <p>Dessas, <strong>${totalFam0a6Rural}</strong> vivem em áreas rurais 
+   <p>No total, <strong>${totalFamRural}</strong> famílias vivem em áreas rurais 
+  (<em>${percFamRural?.toFixed(1) ?? '—'}%</em> do total de famílias cadastradas). Entre as famílias com crianças de 0 a 6 anos, 
+  <strong>${totalFam0a6Rural}</strong> estão em áreas rurais 
   (<em>${perc0a6Rural}%</em>) e <strong>${totalFamGPTE0a6}</strong> pertencem a Grupos Populacionais Tradicionais e Específicos - GPTE 
   (<em>${perc0a6GPTE}%</em> — Fonte: Cadastro Único).</p>
   
