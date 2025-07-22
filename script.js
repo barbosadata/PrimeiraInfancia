@@ -200,4 +200,5 @@ function handleFile(e) {
     `;
   };
 
-reader.readAsArrayBuffer(file);
+  reader.readAsArrayBuffer(file);
+}
