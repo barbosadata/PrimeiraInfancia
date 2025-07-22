@@ -51,6 +51,7 @@ function handleFile(e) {
     setValue("valor-fam-0a6-sem-empregado", row["fam-0a6-sem-empregado"]);
     setValue("valor-fam-gpte", row["fam-gpte"]);
     setValue("valor-fam-gpte-0a6", row["fam-gpte-0a6"]);
+    setValue("valor-fam-rural", row["fam-rural"]);
     setValue("valor-fam-7a15-trabalho-infantil", row["fam-7a15-trabalho-infantil"]);
 
     // Cálculo de percentuais
@@ -84,6 +85,9 @@ function handleFile(e) {
     const percGPTE0a6 = setPercent("perc-fam-gpte-0a6", row["fam-gpte-0a6"], total0a6);
     setSinal("sinal-gpte-0a6", percGPTE0a6, { red: 40, yellow: 20 });
 
+    const percFamRural = setPercent("perc-fam-rural", row["fam-rural"], totalFam);
+    setSinal("sinal-fam-rural", percFamRural, { red: 50, yellow: 25 }); // Ajuste os limites como quiser
+
     const percTrabalhoInfantil = setPercent("perc-fam-7a15-trabalho-infantil", row["fam-7a15-trabalho-infantil"], totalFam);
     const interpretacoes = [];
 
@@ -114,6 +118,10 @@ if (percGPTE >= 50 || percGPTE0a6 >= 40) {
 if (percTrabalhoInfantil >= 5) {
   interpretacoes.push("🚨 Há indícios relevantes de trabalho infantil entre crianças de 7 a 15 anos. É necessário acionar a rede de proteção e o sistema de garantia de direitos.");
 }
+if (percFamRural >= 50) {
+  interpretacoes.push("🏞️ Mais da metade das famílias do município vivem em áreas rurais. As estratégias de visitação domiciliar e cobertura dos serviços devem considerar barreiras de acesso.");
+}
+
 
 // Mostrar as interpretações no HTML
 document.getElementById("interpretacao-bloco-1").innerHTML = `
@@ -135,6 +143,7 @@ const perc0a6Rural = totalFam0a6 > 0 ? ((totalFam0a6Rural / totalFam0a6) * 100).
 
 const totalFamGPTE0a6 = row["fam-gpte-0a6"] ?? 0;
 const perc0a6GPTE = totalFam0a6 > 0 ? ((totalFamGPTE0a6 / totalFam0a6) * 100).toFixed(1) : '—';
+const totalFamRural = row["fam-rural"] ?? 0;
 
 const percDesatualizadosFinal = percDesatualizados?.toFixed(1) ?? '—';
 
