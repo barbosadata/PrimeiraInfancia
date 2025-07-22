@@ -5,6 +5,7 @@ function handleFile(e) {
   if (!file) return;
 
   const reader = new FileReader();
+
   reader.onload = function(event) {
     const data = new Uint8Array(event.target.result);
     const workbook = XLSX.read(data, { type: 'array' });
@@ -13,7 +14,6 @@ function handleFile(e) {
     const json = XLSX.utils.sheet_to_json(sheet);
 
     if (json.length === 0) return;
-
     const row = json[0];
     const totalFam = row["fam-cadunico"];
     const total0a6 = row["fam-0a6"];
@@ -152,6 +152,54 @@ function handleFile(e) {
   <h3>Leitura orientada dos dados:</h3>
   <ul>${interpretacoes.map(txt => `<li>${txt}</li>`).join("")}</ul>
 `;
+     // === BLOCO 2: Serviços ofertados ===
+    const servicoMapeado = [
+      { nome: "PAIF", oferta: "oferta_paif", familias: "n_familias_paif" },
+      { nome: "PCF (Criança Feliz)", oferta: "oferta_cpf", familias: "n_familias_cpf" },
+      { nome: "SCFV", oferta: "oferta_scfv", familias: "n_familias_scfv" },
+      { nome: "PSB em domicílio", oferta: "oferta_psb_domicilio", familias: "n_familias_psb_domicilio" },
+      { nome: "Benefício eventual", oferta: "oferta_beneficio_eventual", familias: "n_familias_beneficio_eventual" }
+    ];
+
+    const tabelaServicosBody = document.getElementById("tabela-servicos-body");
+    tabelaServicosBody.innerHTML = "";
+
+    let totalServicos = 0;
+    let totalOfertados = 0;
+
+    servicoMapeado.forEach(servico => {
+      const ofertado = (row[servico.oferta] ?? "").toString().toLowerCase().trim() === "sim";
+      const atendidas = row[servico.familias] ?? "—";
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${servico.nome}</td>
+        <td>${ofertado ? "✅ Sim" : "❌ Não"}</td>
+        <td>${atendidas}</td>
+      `;
+      tabelaServicosBody.appendChild(tr);
+
+      totalServicos += 1;
+      if (ofertado) totalOfertados += 1;
+    });
+
+    const percOfertados = ((totalOfertados / totalServicos) * 100).toFixed(0);
+
+    let interpretacao = "";
+    if (percOfertados >= 80) {
+      interpretacao = "O CRAS oferta a maior parte dos serviços previstos, indicando boa capacidade instalada.";
+    } else if (percOfertados >= 50) {
+      interpretacao = "O CRAS oferta parte relevante dos serviços, mas há espaço para ampliar sua atuação.";
+    } else {
+      interpretacao = "O número de serviços ofertados diretamente pelo CRAS é baixo, o que pode indicar restrições operacionais.";
+    }
+
+    document.getElementById("interpretacao-bloco-2").innerHTML = `
+      <p>O CRAS oferta <strong>${totalOfertados}</strong> de <strong>${totalServicos}</strong> serviços essenciais para a atenção à primeira infância.</p>
+      <p>${interpretacao}</p>
+    `;
+  };
+
   };
 
   reader.readAsArrayBuffer(file);
