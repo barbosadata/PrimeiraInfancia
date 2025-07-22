@@ -138,8 +138,8 @@ const nomeMunicipio = row["Municipio"] ?? "o município";
 const totalFam0a6 = total0a6 ?? 0;
 const perc0a6 = totalFam > 0 ? ((totalFam0a6 / totalFam) * 100).toFixed(1) : '—';
 
-const totalFam0a6Rural = row["fam-0a6-rural"] ?? 0;
-const perc0a6Rural = totalFam0a6 > 0 ? ((totalFam0a6Rural / totalFam0a6) * 100).toFixed(1) : '—';
+const totalFamRural = row["fam-rural"] ?? 0;
+const perc0a6Rural = totalFam0a6 > 0 ? ((totalFamRural / totalFam0a6) * 100).toFixed(1) : '—';
 
 const totalFamGPTE0a6 = row["fam-gpte-0a6"] ?? 0;
 const perc0a6GPTE = totalFam0a6 > 0 ? ((totalFamGPTE0a6 / totalFam0a6) * 100).toFixed(1) : '—';
@@ -151,11 +151,9 @@ document.getElementById('resumo-bloco-1').innerHTML = `
   <p>No município de <strong>${nomeMunicipio}</strong>, há um total de <strong>${totalFam0a6}</strong> famílias com crianças de 0 a 6 anos inseridas no Cadastro Único 
   (<em>${perc0a6}% das famílias registradas</em> — Fonte: Cadastro Único).</p>
   
-   <p>No total, <strong>${totalFamRural}</strong> famílias vivem em áreas rurais 
-  (<em>${percFamRural?.toFixed(1) ?? '—'}%</em> do total de famílias cadastradas). Entre as famílias com crianças de 0 a 6 anos, 
-  <strong>${totalFam0a6Rural}</strong> estão em áreas rurais 
-  (<em>${perc0a6Rural}%</em>) e <strong>${totalFamGPTE0a6}</strong> pertencem a Grupos Populacionais Tradicionais e Específicos - GPTE 
-  (<em>${perc0a6GPTE}%</em> — Fonte: Cadastro Único).</p>
+   <p>Dessas, <strong>${totalFamRural}</strong> vivem em áreas rurais 
+(<em>${perc0a6Rural}%</em>) e <strong>${totalFamGPTE0a6}</strong> pertencem a Grupos Populacionais Tradicionais e Específicos - GPTE 
+(<em>${perc0a6GPTE}%</em> — Fonte: Cadastro Único).</p>
   
   <p>Além disso, <strong>${percDesatualizadosFinal}%</strong> das famílias estão com o cadastro desatualizado 
   (Fonte: Cadastro Único / Prontuário SUAS).</p>
