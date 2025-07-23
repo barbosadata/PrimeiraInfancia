@@ -279,3 +279,4 @@ function preencherBloco3(row) {
 
 // fora da função, você lê o arquivo:
 reader.readAsArrayBuffer(file);
+  }
