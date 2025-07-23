@@ -271,10 +271,13 @@ function preencherBloco3(row) {
   if (percTrabalhoInfantil >= 10) interpretacoesBloco3.push("🛑 Indícios graves de trabalho infantil entre crianças de 7 a 15 anos.");
   else if (percTrabalhoInfantil >= 5) interpretacoesBloco3.push("⚠️ Indícios de trabalho infantil entre crianças de 7 a 15 anos.");
 
-  document.getElementById("interpretacao-bloco-3").innerHTML = `
+ document.getElementById("interpretacao-bloco-3").innerHTML = `
     <h3>Leitura orientada dos dados:</h3>
     <ul>${interpretacoesBloco3.map(txt => `<li>${txt}</li>`).join("")}</ul>
   `;
-}; // ← fecha o reader.onload
-  reader.readAsArrayBuffer(file);
-} // ← fecha a função handleFile(e)
+}
+    preencherBloco3(row);
+
+};
+  reader.readAsArrayBuffer(file); // ✅ leitura fora da função onload
+} // ✅ fecha handleFile(e)
