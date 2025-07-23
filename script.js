@@ -275,8 +275,6 @@ function preencherBloco3(row) {
     <h3>Leitura orientada dos dados:</h3>
     <ul>${interpretacoesBloco3.map(txt => `<li>${txt}</li>`).join("")}</ul>
   `;
-} // aqui fecha a função
-
-// fora da função, você lê o arquivo:
-reader.readAsArrayBuffer(file);
-  }
+}; // ← fecha o reader.onload
+  reader.readAsArrayBuffer(file);
+} // ← fecha a função handleFile(e)
