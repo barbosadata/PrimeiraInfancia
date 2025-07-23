@@ -198,23 +198,85 @@ function handleFile(e) {
       <p>O CRAS oferta <strong>${totalOfertados}</strong> de <strong>${totalServicos}</strong> serviços essenciais para a atenção à primeira infância.</p>
       <p>${interpretacao}</p>
     `;
-         // === BLOCO 3: Violação de Direitos ===
-    function preencherBloco3(dado) {
-  document.getElementById("valor-violencia-menores").textContent = dado["violencia_menores_10_anos"] || "—";
-  document.getElementById("valor-pcd-cuidados").textContent = dado["fam-0a6-pcd-cuidados"] || "—";
-  document.getElementById("valor-sem-ocupado").textContent = dado["fam-0a6-sem-ocupado"] || "—";
-  document.getElementById("valor-sem-empregado").textContent = dado["fam-0a6-sem-empregado"] || "—";
-  document.getElementById("valor-fora-escola-0a6").textContent = dado["fam-0a6-fora-escola"] || "—";
-  document.getElementById("valor-fora-escola-4a6").textContent = dado["fam-4a6-fora-escola"] || "—";
-  document.getElementById("valor-vacinacao-atrasada").textContent = dado["criancas_ate7_anos_vacinacao_atrasada"] || "—";
-  document.getElementById("valor-frequencia-baixa").textContent = dado["criancas_4a5_frequencia_escolar_menor_60"] || "—";
-  document.getElementById("valor-condicionalidades").textContent = dado["fam_descump_condicionalidades"] || "—";
-  document.getElementById("valor-pobreza-pos-pbf").textContent = dado["fam-pbf-continuam-pobreza"] || "—";
-  document.getElementById("valor-trabalho-infantil").textContent = dado["fam_trabalho_infantil_7a15"] || "—";
-}
-preencherBloco3(row);
+    // === BLOCO 3: Violações de Direitos ===
+function preencherBloco3(row) {
+  // Preencher valores absolutos
+  document.getElementById("valor-violencia-menores").textContent = row["violencia_menores_10_anos"] || "—";
+  document.getElementById("valor-pcd-cuidados").textContent = row["fam-0a6-pcd-cuidados"] || "—";
+  document.getElementById("valor-sem-ocupado").textContent = row["fam-0a6-sem-ocupado"] || "—";
+  document.getElementById("valor-sem-empregado").textContent = row["fam-0a6-sem-empregado"] || "—";
+  document.getElementById("valor-fora-escola-0a6").textContent = row["fam-0a6-fora-escola"] || "—";
+  document.getElementById("valor-fora-escola-4a6").textContent = row["fam-4a6-fora-escola"] || "—";
+  document.getElementById("valor-vacinacao-atrasada").textContent = row["criancas_ate7_anos_vacinacao_atrasada"] || "—";
+  document.getElementById("valor-frequencia-baixa").textContent = row["criancas_4a5_frequencia_escolar_menor_60"] || "—";
+  document.getElementById("valor-condicionalidades").textContent = row["fam_descump_condicionalidades"] || "—";
+  document.getElementById("valor-pobreza-pos-pbf").textContent = row["fam-pbf-continuam-pobreza"] || "—";
+  document.getElementById("valor-trabalho-infantil").textContent = row["fam_trabalho_infantil_7a15"] || "—";
 
-  };
+  const totalPBF_0a6 = row["fam_pbf_0a6"] ?? 0;
+  const totalFam = row["pessoas-total"] ?? 0;
+
+  function setPercentBloco3(id, numerador, denominador) {
+    const valor = denominador > 0 ? (numerador / denominador) * 100 : 0;
+    document.getElementById(id).textContent = valor.toFixed(1) + "%";
+    return valor;
+  }
+
+  function setSinalBloco3(id, valor, faixas) {
+    if (valor >= faixas.red) {
+      document.getElementById(id).textContent = "🟥";
+    } else if (valor >= faixas.yellow) {
+      document.getElementById(id).textContent = "🟨";
+    } else {
+      document.getElementById(id).textContent = "🟩";
+    }
+  }
+
+  // Percentuais
+  const percVacinacaoAtrasada = setPercentBloco3("perc-vacinacao-atrasada", row["criancas_ate7_anos_vacinacao_atrasada"], totalPBF_0a6);
+  setSinalBloco3("sinal-vacinacao-atrasada", percVacinacaoAtrasada, { red: 20, yellow: 10 });
+
+  const percFreqBaixa = setPercentBloco3("perc-frequencia-baixa", row["criancas_4a5_frequencia_escolar_menor_60"], totalPBF_0a6);
+  setSinalBloco3("sinal-frequencia-baixa", percFreqBaixa, { red: 20, yellow: 10 });
+
+  const percCondicionalidade = setPercentBloco3("perc-condicionalidades", row["fam_descump_condicionalidades"], totalPBF_0a6);
+  setSinalBloco3("sinal-condicionalidades", percCondicionalidade, { red: 20, yellow: 10 });
+
+  const percPobrezaPosPBF = setPercentBloco3("perc-pobreza-pos-pbf", row["fam-pbf-continuam-pobreza"], totalPBF_0a6);
+  setSinalBloco3("sinal-pobreza-pos-pbf", percPobrezaPosPBF, { red: 20, yellow: 10 });
+
+  const percForaEscola4a6 = setPercentBloco3("perc-fora-escola-4a6", row["fam-4a6-fora-escola"], totalPBF_0a6);
+  setSinalBloco3("sinal-fora-escola-4a6", percForaEscola4a6, { red: 10, yellow: 5 });
+
+  const percTrabalhoInfantil = setPercentBloco3("perc-trabalho-infantil", row["fam_trabalho_infantil_7a15"], totalFam);
+  setSinalBloco3("sinal-trabalho-infantil", percTrabalhoInfantil, { red: 10, yellow: 5 });
+
+  // Interpretação automática
+  const interpretacoesBloco3 = [];
+  if (percVacinacaoAtrasada >= 20) interpretacoesBloco3.push("🛑 Alta taxa de vacinação atrasada entre crianças até 7 anos.");
+  else if (percVacinacaoAtrasada >= 10) interpretacoesBloco3.push("⚠️ Percentual relevante de vacinação atrasada entre crianças até 7 anos.");
+
+  if (percFreqBaixa >= 20) interpretacoesBloco3.push("🛑 Muitas crianças de 4 e 5 anos com frequência escolar abaixo de 60%.");
+  else if (percFreqBaixa >= 10) interpretacoesBloco3.push("⚠️ Frequência escolar reduzida entre parte das crianças de 4 a 5 anos.");
+
+  if (percCondicionalidade >= 20) interpretacoesBloco3.push("🛑 Muitas famílias descumprindo condicionalidades do PBF.");
+  else if (percCondicionalidade >= 10) interpretacoesBloco3.push("⚠️ Parte das famílias não está cumprindo as condicionalidades do programa.");
+
+  if (percPobrezaPosPBF >= 20) interpretacoesBloco3.push("🛑 Elevado número de famílias ainda em pobreza mesmo após acesso ao PBF.");
+  else if (percPobrezaPosPBF >= 10) interpretacoesBloco3.push("⚠️ Parte das famílias permanece em situação de pobreza após o PBF.");
+
+  if (percForaEscola4a6 >= 10) interpretacoesBloco3.push("🛑 Muitas crianças de 4 a 6 anos fora da escola.");
+  else if (percForaEscola4a6 >= 5) interpretacoesBloco3.push("⚠️ Parte significativa das crianças de 4 a 6 anos fora da escola.");
+
+  if (percTrabalhoInfantil >= 10) interpretacoesBloco3.push("🛑 Indícios graves de trabalho infantil entre crianças de 7 a 15 anos.");
+  else if (percTrabalhoInfantil >= 5) interpretacoesBloco3.push("⚠️ Indícios de trabalho infantil entre crianças de 7 a 15 anos.");
+
+  document.getElementById("interpretacao-bloco-3").innerHTML = `
+    <h3>Leitura orientada dos dados:</h3>
+    <ul>${interpretacoesBloco3.map(txt => `<li>${txt}</li>`).join("")}</ul>
+  `;
+}
+
 
   reader.readAsArrayBuffer(file);
 }
