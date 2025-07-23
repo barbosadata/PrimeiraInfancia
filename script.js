@@ -198,6 +198,22 @@ function handleFile(e) {
       <p>O CRAS oferta <strong>${totalOfertados}</strong> de <strong>${totalServicos}</strong> serviços essenciais para a atenção à primeira infância.</p>
       <p>${interpretacao}</p>
     `;
+         // === BLOCO 3: Violação de Direitos ===
+    function preencherBloco3(dado) {
+  document.getElementById("valor-violencia-menores").textContent = dado["violencia_menores_10_anos"] || "—";
+  document.getElementById("valor-pcd-cuidados").textContent = dado["fam-0a6-pcd-cuidados"] || "—";
+  document.getElementById("valor-sem-ocupado").textContent = dado["fam-0a6-sem-ocupado"] || "—";
+  document.getElementById("valor-sem-empregado").textContent = dado["fam-0a6-sem-empregado"] || "—";
+  document.getElementById("valor-fora-escola-0a6").textContent = dado["fam-0a6-fora-escola"] || "—";
+  document.getElementById("valor-fora-escola-4a6").textContent = dado["fam-4a6-fora-escola"] || "—";
+  document.getElementById("valor-vacinacao-atrasada").textContent = dado["criancas_ate7_anos_vacinacao_atrasada"] || "—";
+  document.getElementById("valor-frequencia-baixa").textContent = dado["criancas_4a5_frequencia_escolar_menor_60"] || "—";
+  document.getElementById("valor-condicionalidades").textContent = dado["fam_descump_condicionalidades"] || "—";
+  document.getElementById("valor-pobreza-pos-pbf").textContent = dado["fam-pbf-continuam-pobreza"] || "—";
+  document.getElementById("valor-trabalho-infantil").textContent = dado["fam_trabalho_infantil_7a15"] || "—";
+}
+preencherBloco3(row);
+
   };
 
   reader.readAsArrayBuffer(file);
