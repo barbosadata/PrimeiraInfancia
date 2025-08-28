@@ -21,7 +21,7 @@ function handleFile(e) {
     const total0a6 = row["fam-0a6"] ?? 0;
     const totalGPTE = row["fam-gpte-0a6"] ?? 0;
     const totalRural = row["fam-rural"] ?? 0;
-    const cadDesat = row["cadunico-desatualizados"] ?? 0;
+    const cadDesat = row["cadunico-desatualizado_br"] ?? 0;
 
     const p0a6 = totalFam > 0 ? (total0a6 / totalFam) * 100 : 0;
     const pGPTE = total0a6 > 0 ? (totalGPTE / total0a6) * 100 : 0;
@@ -74,4 +74,5 @@ function renderResumo(cras, municipio, p0a6, pGPTE, pRural, pDesat, interpretaco
     <ul>${interpretacoes.map(txt => `<li>${txt}</li>`).join('')}</ul>
   `;
 }
+
 
