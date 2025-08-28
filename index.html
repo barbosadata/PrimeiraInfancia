@@ -1,213 +1,69 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Meu Município na Primeira Infância</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Diagnóstico CRAS - Bloco 1</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+body { font-family: Arial, sans-serif; margin: 30px; }
+h2, h3 { color: #2c3e50; }
+.resumo-dinamico { background: #f4f4f4; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
+.bloco { margin-bottom: 40px; }
+ul { padding-left: 20px; }
+li { margin-bottom: 10px; }
+.label { font-weight: bold; color: #333; }
+.sinal { font-size: 20px; display: inline-block; width: 30px; text-align: center; }
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1>Diagnóstico da Primeira Infância</h1>
-    <p>Envie a planilha preenchida para visualizar o diagnóstico automático.</p>
-
-    <input type="file" id="fileInput" accept=".xlsx, .xls">
-    <div id="output"></div>
-  </div>
-
-<div class="bloco">
-
-<div class="bloco">
-  <!-- === BLOCO 1: Perfil do Território e Público-Alvo === -->
-  <section id="bloco-1-perfil">
-    <h2>1. Perfil do Território e Público-Alvo</h2>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Indicador</th>
-          <th>Valor absoluto</th>
-          <th>Percentual</th>
-          <th>Classificação</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Total de famílias no Cadastro Único</td>
-          <td id="valor-fam-cadunico"></td>
-          <td>—</td>
-          <td>—</td>
-        </tr>
-        <tr>
-          <td>Famílias com dados desatualizados</td>
-          <td id="valor-cadunico-desatualizados"></td>
-          <td id="perc-cadunico-desatualizados"></td>
-          <td id="sinal-cadastro"></td>
-        </tr>
-        <tr>
-          <td>Famílias com crianças de 0 a 6 anos</td>
-          <td id="valor-fam-0a6"></td>
-          <td id="perc-fam-0a6"></td>
-          <td id="sinal-fam-0a6"></td>
-        </tr>
-        <tr>
-          <td>Famílias com crianças de 0 a 6 com dados desatualizados</td>
-          <td id="valor-fam-0a6-desatualizadas"></td>
-          <td id="perc-fam-0a6-desatualizadas"></td>
-          <td id="sinal-fam-0a6-desatualizadas"></td>
-        </tr>
-        <tr>
-          <td>Famílias com criança 0–6 fora da escola</td>
-          <td id="valor-fam-0a6-fora-escola"></td>
-          <td id="perc-fam-0a6-fora-escola"></td>
-          <td id="sinal-escola-0a6"></td>
-        </tr>
-        <tr>
-          <td>Famílias com criança 4–6 fora da escola</td>
-          <td id="valor-fam-4a6-fora-escola"></td>
-          <td id="perc-fam-4a6-fora-escola"></td>
-          <td id="sinal-escola-4a6"></td>
-        </tr>
-        <tr>
-          <td>Famílias com pessoa com deficiência e criança 0–6</td>
-          <td id="valor-fam-0a6-pcd-cuidados"></td>
-          <td id="perc-fam-0a6-pcd-cuidados"></td>
-          <td id="sinal-pcd-cuidados"></td>
-        </tr>
-        <tr>
-          <td>Famílias com criança 0–6 sem adulto ocupado</td>
-          <td id="valor-fam-0a6-sem-ocupado"></td>
-          <td id="perc-fam-0a6-sem-ocupado"></td>
-          <td id="sinal-sem-ocupado"></td>
-        </tr>
-        <tr>
-          <td>Famílias com criança 0–6 sem adulto empregado</td>
-          <td id="valor-fam-0a6-sem-empregado"></td>
-          <td id="perc-fam-0a6-sem-empregado"></td>
-          <td id="sinal-sem-empregado"></td>
-        </tr>
-        <tr>
-          <td>Famílias em GPTE</td>
-          <td id="valor-fam-gpte"></td>
-          <td id="perc-fam-gpte"></td>
-          <td id="sinal-gpte"></td>
-        </tr>
-        <tr>
-          <td>Famílias em GPTE com criança 0–6</td>
-          <td id="valor-fam-gpte-0a6"></td>
-          <td id="perc-fam-gpte-0a6"></td>
-          <td id="sinal-gpte-0a6"></td>
-        </tr>
-        <tr>
-          <td>Famílias residentes em área rural</td>
-          <td id="valor-fam-rural"></td>
-          <td id="perc-fam-rural"></td>
-          <td id="sinal-fam-rural"></td>
-        </tr>
-        <tr>
-          <td>Famílias com pessoa 7–15 em situação de trabalho infantil</td>
-          <td id="valor-fam-7a15-trabalho-infantil"></td>
-          <td id="perc-fam-7a15-trabalho-infantil"></td>
-          <td id="sinal-trabalho-infantil"></td>
-        </tr>
-      </tbody>
-    </table>
-    <p>Esses indicadores foram calculados a partir dos dados do Cadastro Único e auxiliam no mapeamento de vulnerabilidades e no planejamento das ações prioritárias para a primeira infância.</p>
-  </section>
-</div>
-  <div id="interpretacao-bloco-1" class="interpretacao">
-  <!-- Preenchido dinamicamente com base nos dados -->
-    <div id="resumo-bloco-1" class="resumo-dinamico"></div>
-</div>
-  <section id="bloco-2-servicos">
-  <h2>2. Serviços ofertados pelo CRAS</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Serviço</th>
-        <th>É ofertado?</th>
-        <th>Famílias atendidas</th>
-      </tr>
-    </thead>
-    <tbody id="tabela-servicos-body"></tbody>
-  </table>
-  <div id="interpretacao-bloco-2" class="interpretacao"></div>
-    <div id="bloco-3" class="bloco">
-  <h2>3. Sinais de Violações de Direitos e Alerta Social</h2>
-
-  <table class="tabela-dados">
-    <thead>
-      <tr>
-        <th>Indicador</th>
-        <th>Valor</th>
-        <th>Referência</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Registros de violência contra menores de 10 anos</td>
-        <td id="valor-violencia-menores"></td>
-        <td>2023 – Sistema de Registro</td>
-      </tr>
-      <tr>
-        <td>Famílias com crianças de 0 a 6 anos com PCD que necessitam de cuidados</td>
-        <td id="valor-pcd-cuidados"></td>
-        <td>Cadastro Único</td>
-      </tr>
-      <tr>
-        <td>Famílias com crianças de 0 a 6 anos sem adulto ocupado</td>
-        <td id="valor-sem-ocupado"></td>
-        <td>Cadastro Único</td>
-      </tr>
-      <tr>
-        <td>Famílias com crianças de 0 a 6 anos sem adulto empregado</td>
-        <td id="valor-sem-empregado"></td>
-        <td>Cadastro Único</td>
-      </tr>
-      <tr>
-        <td>Famílias com crianças de 0 a 6 anos fora da escola</td>
-        <td id="valor-fora-escola-0a6"></td>
-        <td>Cadastro Único / Educação</td>
-      </tr>
-      <tr>
-        <td>Famílias com crianças de 4 a 6 anos fora da escola</td>
-        <td id="valor-fora-escola-4a6"></td>
-        <td>Cadastro Único / Educação</td>
-      </tr>
-      <tr>
-        <td>Crianças até 7 anos com vacinação atrasada</td>
-        <td id="valor-vacinacao-atrasada"></td>
-        <td>Saúde / Cadastro Único</td>
-      </tr>
-      <tr>
-        <td>Crianças de 4 a 5 anos com frequência escolar inferior a 60%</td>
-        <td id="valor-frequencia-baixa"></td>
-        <td>Educação / Cadastro Único</td>
-      </tr>
-      <tr>
-        <td>Famílias em descumprimento de condicionalidades</td>
-        <td id="valor-condicionalidades"></td>
-        <td>Cadastro Único / PBF</td>
-      </tr>
-      <tr>
-        <td>Famílias em situação de pobreza mesmo após o PBF</td>
-        <td id="valor-pobreza-pos-pbf"></td>
-        <td>Cadastro Único</td>
-      </tr>
-      <tr>
-        <td>Incidência de trabalho infantil (7 a 15 anos)</td>
-        <td id="valor-trabalho-infantil"></td>
-        <td>Cadastro Único</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div id="interpretacao-bloco-3" class="resumo-dinamico"></div>
-</div>
-</section>
 
 
-  <!-- SheetJS -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script src="script.js"></script>
-</body>
+<h2>Diagnóstico CRAS - Bloco 1</h2>
+
+
+<input type="file" id="fileInput" accept=".xlsx">
+<div id="output"></div>
+<div id="interpretacao-bloco-1"></div>
+
+
+<script>
+document.getElementById('fileInput').addEventListener('change', handleFile, false);
+
+
+function handleFile(e) {
+const file = e.target.files[0];
+if (!file) return;
+
+
+const reader = new FileReader();
+reader.onload = function(event) {
+const data = new Uint8Array(event.target.result);
+const workbook = XLSX.read(data, { type: 'array' });
+const sheetName = workbook.SheetNames[0];
+const sheet = workbook.Sheets[sheetName];
+const json = XLSX.utils.sheet_to_json(sheet);
+
+
+if (json.length === 0) return;
+const row = json[0];
+
+
+const municipio = row["Municipio"] ?? "(município não identificado)";
+const cras = row["CRAS"] ?? "(CRAS não identificado)";
+const totalFam = row["fam-cadunico"] ?? 0;
+const total0a6 = row["fam-0a6"] ?? 0;
+const totalGPTE = row["fam-gpte-0a6"] ?? 0;
+const totalRural = row["fam-rural"] ?? 0;
+const cadDesat = row["cadunico-desatualizados"] ?? 0;
+
+
+const p0a6 = totalFam > 0 ? (total0a6 / totalFam) * 100 : 0;
+const pGPTE = total0a6 > 0 ? (totalGPTE / total0a6) * 100 : 0;
+const pRural = total0a6 > 0 ? (totalRural / total0a6) * 100 : 0;
+const pDesat = totalFam > 0 ? (cadDesat / totalFam) * 100 : 0;
+
+
+const interpretacoes = [];
+
+
 </html>
