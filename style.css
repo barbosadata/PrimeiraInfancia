@@ -1,99 +1,47 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #f9f9f9;
-  margin: 0;
-  padding: 2rem;
-}
-
-.container {
-  max-width: 960px;
-  margin: auto;
-  background: #fff;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
-}
-
-h1, h2, h3 {
-  color: #2c3e50;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-  margin-bottom: 2rem;
-}
-
-table, th, td {
-  border: 1px solid #ccc;
-}
-
-th {
-  background-color: #f0f0f0;
-  text-align: left;
-  padding: 0.75rem;
-}
-
-td {
-  padding: 0.75rem;
-}
-
-p {
-  margin: 1rem 0;
-  line-height: 1.5;
-}
-
-.bloco {
-  margin-bottom: 3rem;
-}
-
-#output {
-  margin-top: 1rem;
-}
-
-/* NOVOS ESTILOS PARA RESUMO DINÂMICO */
-
-.resumo-dinamico {
-  background-color: #eef2f7;
-  border-left: 6px solid #3498db;
-  padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 30px;
-}
-
-.resumo-dinamico ul {
-  list-style-type: disc;
-  padding-left: 20px;
-}
-
-.resumo-dinamico li {
-  margin-bottom: 12px;
+  margin: 2rem;
   line-height: 1.6;
+  background-color: #f8f9fa;
+  color: #333;
 }
 
-/* ALERTAS DE CORES */
-
-.alerta-verde {
-  color: #1e7e34;
-  background-color: #d4edda;
-  border-left: 6px solid #28a745;
-  padding: 10px;
-  border-radius: 5px;
+h3 {
+  margin-top: 1rem;
+  color: #004080;
 }
 
-.alerta-amarelo {
-  color: #856404;
+h4 {
+  margin-top: 1.5rem;
+  color: #006600;
+}
+
+.alerta {
   background-color: #fff3cd;
-  border-left: 6px solid #ffc107;
-  padding: 10px;
-  border-radius: 5px;
+  color: #856404;
+  border: 1px solid #ffeeba;
+  padding: 0.75rem;
+  margin: 1rem 0;
+  border-radius: 6px;
+  font-weight: bold;
 }
 
-.alerta-vermelho {
-  color: #721c24;
-  background-color: #f8d7da;
-  border-left: 6px solid #dc3545;
-  padding: 10px;
-  border-radius: 5px;
+ul {
+  padding-left: 1.5rem;
+}
+
+ul li {
+  margin-bottom: 0.5rem;
+}
+
+#interpretacao-bloco-1 {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  margin-top: 1rem;
+}
+
+input[type="file"] {
+  margin-bottom: 1rem;
 }
