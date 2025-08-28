@@ -1,69 +1,21 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Diagnóstico CRAS - Bloco 1</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<style>
-body { font-family: Arial, sans-serif; margin: 30px; }
-h2, h3 { color: #2c3e50; }
-.resumo-dinamico { background: #f4f4f4; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
-.bloco { margin-bottom: 40px; }
-ul { padding-left: 20px; }
-li { margin-bottom: 10px; }
-.label { font-weight: bold; color: #333; }
-.sinal { font-size: 20px; display: inline-block; width: 30px; text-align: center; }
-</style>
+  <meta charset="UTF-8">
+  <title>Diagnóstico CRAS - Bloco 1</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
+  <div class="container">
+    <h2>Diagnóstico CRAS - Bloco 1</h2>
 
-<h2>Diagnóstico CRAS - Bloco 1</h2>
+    <input type="file" id="fileInput" accept=".xlsx">
+    <div id="output"></div>
+    <div id="interpretacao-bloco-1" class="resumo-dinamico"></div>
+  </div>
 
-
-<input type="file" id="fileInput" accept=".xlsx">
-<div id="output"></div>
-<div id="interpretacao-bloco-1"></div>
-
-
-<script>
-document.getElementById('fileInput').addEventListener('change', handleFile, false);
-
-
-function handleFile(e) {
-const file = e.target.files[0];
-if (!file) return;
-
-
-const reader = new FileReader();
-reader.onload = function(event) {
-const data = new Uint8Array(event.target.result);
-const workbook = XLSX.read(data, { type: 'array' });
-const sheetName = workbook.SheetNames[0];
-const sheet = workbook.Sheets[sheetName];
-const json = XLSX.utils.sheet_to_json(sheet);
-
-
-if (json.length === 0) return;
-const row = json[0];
-
-
-const municipio = row["Municipio"] ?? "(município não identificado)";
-const cras = row["CRAS"] ?? "(CRAS não identificado)";
-const totalFam = row["fam-cadunico"] ?? 0;
-const total0a6 = row["fam-0a6"] ?? 0;
-const totalGPTE = row["fam-gpte-0a6"] ?? 0;
-const totalRural = row["fam-rural"] ?? 0;
-const cadDesat = row["cadunico-desatualizados"] ?? 0;
-
-
-const p0a6 = totalFam > 0 ? (total0a6 / totalFam) * 100 : 0;
-const pGPTE = total0a6 > 0 ? (totalGPTE / total0a6) * 100 : 0;
-const pRural = total0a6 > 0 ? (totalRural / total0a6) * 100 : 0;
-const pDesat = totalFam > 0 ? (cadDesat / totalFam) * 100 : 0;
-
-
-const interpretacoes = [];
-
-
+  <script src="script.js"></script>
+</body>
 </html>
