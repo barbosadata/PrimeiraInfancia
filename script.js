@@ -156,7 +156,8 @@ function gerarBloco2(dados) {
   }
   document.getElementById('interpretacao-bloco-2').innerHTML = texto;
 
-
+}
   return texto;
 }
+
 
