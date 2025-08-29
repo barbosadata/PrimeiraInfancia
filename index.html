@@ -4,49 +4,176 @@
   <meta charset="UTF-8">
   <title>Diagnóstico da Primeira Infância</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary-color: #2563eb;
+      --text-color: #1f2937;
+      --background-color: #f3f4f6;
+      --card-background: #ffffff;
+      --accent-color: #3b82f6;
+      --border-color: #e5e7eb;
+      --highlight-color: #dbeafe;
+    }
+
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f7f7f7;
-      color: #333;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
       margin: 0;
       padding: 2rem;
-      line-height: 1.6;
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Inter', sans-serif;
+      color: var(--primary-color);
+      line-height: 1.3;
     }
 
     h1 {
-      color: #005a8d;
+      font-size: 2.5rem;
       text-align: center;
-      font-size: 2rem;
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
+      font-weight: 600;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      margin-top: 3rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--border-color);
     }
 
     .container {
-      max-width: 900px;
+      max-width: 1000px;
       margin: 0 auto;
-      background-color: #fff;
+      background-color: var(--card-background);
+      padding: 3rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .file-input-container {
+      text-align: center;
+      margin-bottom: 3rem;
       padding: 2rem;
+      border: 2px dashed var(--border-color);
       border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .file-input-container:hover {
+      border-color: var(--accent-color);
+      background-color: var(--highlight-color);
     }
 
     input[type="file"] {
       display: block;
-      margin: 0 auto 2rem auto;
+      margin: 0 auto;
       font-size: 1rem;
       padding: 0.5rem;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .resultado {
+      margin-top: 2rem;
+      background-color: #ffffff;
+      padding: 2rem;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      line-height: 1.8;
     }
 
     .resultado p {
-      margin-bottom: 1.2rem;
+      margin-bottom: 1.8rem;
       text-align: justify;
+      font-size: 1.1rem;
+      color: var(--text-color);
+    }
+
+    .block {
+      margin-bottom: 4rem;
+    }
+
+    .block h2 {
+      font-size: 1.8rem;
+      margin-bottom: 2rem;
+      color: var(--primary-color);
+      border-bottom: 3px solid var(--highlight-color);
+      padding-bottom: 0.5rem;
     }
 
     strong {
-      color: #000;
+      color: var(--primary-color);
+      font-weight: 600;
     }
 
-    @media (max-width: 600px) {
+    /* Styling for statistics */
+    .stat {
+      display: inline-block;
+      background-color: var(--highlight-color);
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      margin: 0 0.2em;
+    }
+
+    /* Statistics highlighting */
+    .percentage {
+      background-color: var(--highlight-color);
+      padding: 0.2em 0.4em;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    /* Content spacing and readability */
+    .content-blocks {
+      margin-top: 3rem;
+    }
+
+    .resultado {
+      max-width: 800px;
+      margin: 2rem auto;
+    }
+
+    /* Better text readability */
+    .resultado {
+      letter-spacing: 0.01em;
+      word-spacing: 0.05em;
+    }
+
+    /* Section titles */
+    .section-title {
+      color: var(--primary-color);
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin: 2rem 0 1rem;
+    }
+
+    /* Error message styling */
+    .error-message {
+      background-color: #fee2e2;
+      border: 1px solid #ef4444;
+      color: #dc2626;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+
+    /* Improved readability for numbers */
+    strong {
+      font-family: 'Inter', sans-serif;
+      font-feature-settings: "tnum" 1;
+      letter-spacing: -0.01em;
+    }
+
+    @media (max-width: 768px) {
       body {
         padding: 1rem;
       }
@@ -56,7 +183,12 @@
       }
 
       h1 {
-        font-size: 1.5rem;
+        font-size: 2rem;
+      }
+
+      .resultado p {
+        font-size: 1rem;
+        padding: 1rem;
       }
     }
   </style>
@@ -64,11 +196,23 @@
 <body>
   <div class="container">
     <h1>Diagnóstico da Primeira Infância</h1>
-    <input type="file" id="fileInput" accept=".xlsx, .xls" />
-    <div id="interpretacao-bloco-1" class="resultado"></div>
-    <h3>Bloco 2 – Vulnerabilidades e riscos sociais para crianças pequenas</h3>
-<div id="interpretacao-bloco-2" class="resultado"></div>
+    
+    <div class="file-input-container">
+      <input type="file" id="fileInput" accept=".xlsx, .xls" />
+      <p class="file-hint">Selecione o arquivo Excel com os dados do diagnóstico</p>
+    </div>
 
+    <div class="content-blocks">
+      <div class="block">
+        <h2>Bloco 1 – Perfil do território</h2>
+        <div id="interpretacao-bloco-1" class="resultado"></div>
+      </div>
+
+      <div class="block">
+        <h2>Bloco 2 – Vulnerabilidades e riscos sociais</h2>
+        <div id="interpretacao-bloco-2" class="resultado"></div>
+      </div>
+    </div>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
