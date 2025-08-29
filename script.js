@@ -154,6 +154,9 @@ function gerarBloco2(dados) {
     const percDesat = getPerc(fam0a6Desatualizadas, totalFam0a6);
     texto += `<p><strong>${formatNumber(fam0a6Desatualizadas)}</strong> famílias com crianças pequenas têm cadastros desatualizados — <strong>${formatPercent(percDesat)}%</strong>.</p>`;
   }
+  document.getElementById('interpretacao-bloco-2').innerHTML = texto;
+
 
   return texto;
 }
+
