@@ -35,15 +35,23 @@ document.getElementById('fileInput').addEventListener('change', function (e) {
       dados[header[i]] = values[i];
     }
 
-    // Chamadas dos blocos de interpretação
-    gerarBloco1(dados);  // ⬅️ Bloco 1: Perfil do território
-    const textoBloco2 = gerarBloco2(dados);  // ⬅️ Bloco 2: Vulnerabilidades
+    // Gerar blocos e atualizar HTML
+    // Bloco 1
+    const textoBloco1 = gerarBloco1(dados);
+    if (document.getElementById('interpretacao-bloco-1')) {
+      document.getElementById('interpretacao-bloco-1').innerHTML = textoBloco1
+        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+        .replace(/\n/g, "<br>");
+    }
 
-    // Atualiza o HTML
-   document.getElementById('interpretacao-bloco-2').innerHTML = textoBloco2
-  .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")  // **negrito**
-  .replace(/\n/g, "<br>");                           // quebra de linha
-
+    // Bloco 2
+    const textoBloco2 = gerarBloco2(dados);
+    if (document.getElementById('interpretacao-bloco-2')) {
+      document.getElementById('interpretacao-bloco-2').innerHTML = textoBloco2
+        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+        .replace(/\n/g, "<br>");
+    }
+  };
 
   reader.readAsArrayBuffer(file);
 });
