@@ -103,5 +103,70 @@ document.getElementById('fileInput').addEventListener('change', function (e) {
     document.getElementById('interpretacao-bloco-1').innerHTML = texto;
   };
 
+  // ========================
+// BLOCO 2 – VULNERABILIDADES
+// ========================
+
+function gerarBloco2(dados) {
+  const totalFamilias = dados["n_familias_cadunico_mun"];
+  const totalFam0a6 = dados["fam-0a6_mun"];
+
+  const trabalhoInfantil = dados["fam_trabalho_infantil_mun"];
+  const trabalhoInfantilReferenciada = dados["fam_trabalho_infantil_referenciada_no_CRAS_anual"];
+  const pcdCuidados = dados["fam-0a6-pcd-cuidados_mun"];
+  const fam0a6SemOcupado = dados["fam-0a6-sem-ocupado_mun"];
+  const fam0a6SemLer = dados["fam-0a6-sem-ler_mun"];
+  const famSemOcupado = dados["fam-sem-ocupado_mun"];
+  const famGPTE0a6 = dados["fam-gpte-0a6_mun"];
+  const fam0a6Desatualizadas = dados["fam-0a6-desatualizadas_mun"];
+
+  let texto = `**Bloco 2. Vulnerabilidades e riscos sociais para crianças pequenas**\n\n`;
+
+  texto += `Este bloco reúne dados que revelam **riscos acumulados e vulnerabilidades estruturais** nas famílias com crianças de 0 a 6 anos, o que impacta diretamente suas oportunidades de desenvolvimento.\n\n`;
+
+  if (trabalhoInfantil && totalFamilias) {
+    const percTI = (trabalhoInfantil / totalFamilias * 100).toFixed(2);
+    texto += `No município, **${formatNumber(trabalhoInfantil)} famílias estão em situação de trabalho infantil**, o que representa cerca de **${percTI}% do total cadastrado**. Esse dado exige atenção redobrada à atuação articulada entre assistência social, educação e o sistema de garantias.\n\n`;
+  }
+
+  if (trabalhoInfantilReferenciada) {
+    texto += `Entre essas, **${formatNumber(trabalhoInfantilReferenciada)} foram referenciadas ao CRAS ao longo do ano**, apontando para o potencial (e também o limite) da atuação da Proteção Social Básica nesse enfrentamento.\n\n`;
+  }
+
+  if (pcdCuidados && totalFam0a6) {
+    const percPCD = (pcdCuidados / totalFam0a6 * 100).toFixed(2);
+    texto += `Há **${formatNumber(pcdCuidados)} famílias com crianças pequenas com deficiência que demandam cuidados permanentes**, representando **${percPCD}% do total de famílias com crianças de 0 a 6 anos** — um grupo que demanda atenção integral e estratégias específicas de apoio.\n\n`;
+  }
+
+  if (fam0a6SemOcupado && totalFam0a6) {
+    const percSemOcupado = (fam0a6SemOcupado / totalFam0a6 * 100).toFixed(2);
+    texto += `Cerca de **${formatNumber(fam0a6SemOcupado)} famílias com crianças de 0 a 6 anos não possuem nenhum integrante ocupado**, o que representa **${percSemOcupado}% dessa população** e pode indicar situações de extrema vulnerabilidade socioeconômica.\n\n`;
+  }
+
+  if (fam0a6SemLer && totalFam0a6) {
+    const percSemLer = (fam0a6SemLer / totalFam0a6 * 100).toFixed(2);
+    texto += `Além disso, **${formatNumber(fam0a6SemLer)} famílias não contam com nenhum membro alfabetizado**, o que corresponde a **${percSemLer}% das famílias com crianças pequenas** — uma barreira significativa à promoção de estímulos cognitivos no ambiente familiar.\n\n`;
+  }
+
+  if (famSemOcupado && totalFamilias) {
+    const percGeralSemOcupado = (famSemOcupado / totalFamilias * 100).toFixed(2);
+    texto += `Em termos gerais, **${formatNumber(famSemOcupado)} famílias cadastradas no município não possuem integrantes ocupados**, cerca de **${percGeralSemOcupado}% do total**, reforçando o cenário de vulnerabilidade socioeconômica ampliada.\n\n`;
+  }
+
+  if (famGPTE0a6 && totalFam0a6) {
+    const percGPTE = (famGPTE0a6 / totalFam0a6 * 100).toFixed(2);
+    texto += `O dado de **${formatNumber(famGPTE0a6)} famílias com crianças de 0 a 6 anos em territórios com Grandes Problemas e Tradições Específicas (GPTE)** representa **${percGPTE}% das famílias com crianças pequenas**, exigindo respostas territorializadas e culturalmente sensíveis.\n\n`;
+  }
+
+  if (fam0a6Desatualizadas && totalFam0a6) {
+    const percDesatualizadas = (fam0a6Desatualizadas / totalFam0a6 * 100).toFixed(2);
+    texto += `Por fim, **${formatNumber(fam0a6Desatualizadas)} famílias com crianças de 0 a 6 anos estão com o cadastro desatualizado**, o que representa **${percDesatualizadas}% dessa população** e pode comprometer seu acesso a benefícios e serviços prioritários.\n\n`;
+  }
+
+  return texto;
+}
+
+
   reader.readAsArrayBuffer(file);
 });
+
