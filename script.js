@@ -1,3 +1,31 @@
+
+document.getElementById('fileInput').addEventListener('change', function (e) {
+  const file = e.target.files[0];
+  const reader = new FileReader();
+
+  reader.onload = function (e) {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: 'array' });
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+    // Convertendo a matriz em objeto {nome_coluna: valor}
+    const header = json[0];
+    const values = json[1];
+    const dados = {};
+    for (let i = 0; i < header.length; i++) {
+      dados[header[i]] = values[i];
+    }
+
+    console.log("Dados carregados:", dados); // VERIFIQUE SE APARECE
+    gerarBloco1(dados); // Certifique-se que isso está sendo chamado
+    gerarBloco2(dados); // E aqui também
+  };
+
+  reader.readAsArrayBuffer(file);
+});
+
 // ----------------------
 // Funções auxiliares
 // ----------------------
@@ -158,6 +186,7 @@ function gerarBloco2(dados) {
 
   return texto;
 }
+
 
 
 
