@@ -225,8 +225,26 @@ document.getElementById('fileInput').addEventListener('change', async function (
             const dados = {};
             for (let i = 0; i < header.length; i++) {
                 if (header[i]) {
+                    const rawKey = String(header[i]).trim();
+                    const key = rawKey;
                     const value = values[i];
-                    dados[header[i]] = typeof value === 'number' ? value : Number(value) || 0;
+
+                    // Preserve textual fields for CRAS and Municipio
+                    if (key.toLowerCase() === 'cras' || key.toLowerCase() === 'municipio') {
+                        dados[key] = value !== undefined && value !== null ? String(value).trim() : 'N/A';
+                        continue;
+                    }
+
+                    // Try to coerce numeric values. Accept comma as decimal separator.
+                    if (typeof value === 'number') {
+                        dados[key] = value;
+                    } else if (value === undefined || value === null || String(value).trim() === '') {
+                        dados[key] = 0;
+                    } else {
+                        const normalized = String(value).replace(/\./g, '').replace(',', '.').trim();
+                        const num = Number(normalized);
+                        dados[key] = isNaN(num) ? 0 : num;
+                    }
                 }
             }
 
@@ -266,4 +284,3 @@ document.getElementById('fileInput').addEventListener('change', async function (
         showError('Erro ao ler o arquivo: ' + error.message);
     }
 });
-
