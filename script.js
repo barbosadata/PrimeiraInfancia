@@ -519,6 +519,8 @@ document.getElementById('fileInput').addEventListener('change', async function (
             const mappedKeys = header.map(h => ({ raw: h, mapped: canonicalKeyFromHeader(h) || null }));
 
                     console.log('Dados processados:', dados);
+                    // keep last parsed dados for report generation
+                    window.__lastDados = dados;
 
             // Gerar e exibir os blocos
             const bloco1Element = document.getElementById('interpretacao-bloco-1');
@@ -570,6 +572,7 @@ document.getElementById('fileInput').addEventListener('change', async function (
                     .replace(/\n/g, "<br>");
             }
 
+
         } catch (error) {
             console.error('Erro ao processar arquivo:', error);
             showError(error.message);
@@ -586,3 +589,65 @@ document.getElementById('fileInput').addEventListener('change', async function (
         showError('Erro ao ler o arquivo: ' + error.message);
     }
 });
+
+// Generate a printable HTML report and open print dialog
+function generatePrintableReport(dados) {
+        if (!dados) {
+                alert('Nenhum dado carregado. Por favor, carregue um arquivo Excel primeiro.');
+                return;
+        }
+
+        const title = `Relatório - Diagnóstico da Primeira Infância`;
+        const format = (s) => String(s === undefined || s === null ? '' : s);
+
+        // Build HTML sections from current blocks
+        const bloco1 = gerarBloco1(dados).replace(/\n/g, '<br>');
+        const bloco2 = gerarBloco2(dados).replace(/\n/g, '<br>');
+        const bloco3 = gerarBloco3(dados).replace(/\n/g, '<br>');
+        const bloco4 = gerarBloco4(dados).replace(/\n/g, '<br>');
+        const bloco5 = gerarBloco5(dados).replace(/\n/g, '<br>');
+        const alertas = gerarBlocoAlertas(dados).replace(/\n/g, '<br>');
+
+        const html = `
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>${title}</title>
+            <style>
+                body{font-family:Arial, Helvetica, sans-serif;color:#222;padding:20px}
+                h1{font-size:20px;margin-bottom:8px}
+                h2{font-size:16px;margin-top:18px}
+                .section{margin-bottom:12px}
+                .muted{color:#555;font-size:13px}
+            </style>
+        </head>
+        <body>
+            <h1>${title}</h1>
+            <div class="muted">Gerado em: ${new Date().toLocaleString()}</div>
+
+            <div class="section"><h2>Bloco 1 – Perfil do território</h2>${bloco1}</div>
+            <div class="section"><h2>Bloco 2 – Vulnerabilidades e riscos sociais</h2>${bloco2}</div>
+            <div class="section"><h2>Bloco 3 – Acesso à Educação</h2>${bloco3}</div>
+            <div class="section"><h2>Bloco 4 – Saúde e Condicionalidades</h2>${bloco4}</div>
+            <div class="section"><h2>Bloco 5 – Violações de direitos</h2>${bloco5}</div>
+            <div class="section"><h2>Bloco Final – Alertas e Prioridades</h2>${alertas}</div>
+
+        </body>
+        </html>`;
+
+        const win = window.open('', '_blank');
+        win.document.open();
+        win.document.write(html);
+        win.document.close();
+        // give it a moment to render then print
+        setTimeout(() => {
+                try { win.print(); } catch (e) { console.warn('print failed', e); }
+        }, 500);
+}
+
+// Wire print button
+document.getElementById('btnPrint').addEventListener('click', () => {
+        generatePrintableReport(window.__lastDados);
+});
+
+
