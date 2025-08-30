@@ -27,11 +27,71 @@ function showError(message) {
     errorDiv.textContent = 'Erro: ' + message;
     document.querySelector('.container').appendChild(errorDiv);
 }
+    // helper: format percent from part and total (returns string like '12,3')
+    function formatPercentFrom(part, total) {
+        if (typeof part !== 'number' || typeof total !== 'number' || total <= 0) return null;
+        return getPerc(part, total).toFixed(1).replace('.', ',');
+    }
 
 function clearErrors() {
     const errorDivs = document.querySelectorAll('div[style*="color: red"]');
     errorDivs.forEach(div => div.remove());
 }
+
+// Normalize incoming Excel header text to a canonical key when possible.
+function canonicalKeyFromHeader(raw) {
+    if (!raw) return null;
+    const low = String(raw).toLowerCase();
+    // remove diacritics
+    const norm = low.normalize && low.normalize('NFD') ? low.normalize('NFD').replace(/[ -\u036f]/g, '') : low;
+    // compact to letters+numbers only (underscores used as separators)
+    const compact = norm.replace(/[^a-z0-9]/g, '_');
+
+    // common canonical mappings (extend as needed)
+    if (compact.indexOf('cras') !== -1) return 'CRAS';
+    if (compact.indexOf('municip') !== -1) return 'Municipio';
+    if (compact.indexOf('nutric') !== -1 || compact.indexOf('acompnutric') !== -1) return 'nao_acomp_nutricional_0a7';
+    if (compact.indexOf('vacin') !== -1 || compact.indexOf('vacina') !== -1) return 'nao_vacinacao_0a7';
+    if (compact.indexOf('prenat') !== -1) return 'nao_prenatal_adequad';
+    // be flexible for various PBF header variants
+    if (compact.indexOf('fam_pbf') !== -1 || compact.indexOf('pbf_0a6') !== -1 || (compact.indexOf('pbf') !== -1 && compact.indexOf('0a6') !== -1) || (compact.indexOf('pbf') !== -1 && compact.indexOf('fam') !== -1)) return 'fam_pbf_0a6';
+
+    return null; // unknown -> keep original header as key
+}
+
+// Robust number parser: accept numbers or strings with '.' thousands and ',' decimals
+function parseNumberFlexible(v) {
+    if (typeof v === 'number') return v;
+    if (v === undefined || v === null) return NaN;
+    const s = String(v).trim();
+    if (s === '') return NaN;
+    const normalized = s.replace(/\./g, '').replace(',', '.');
+    const num = Number(normalized);
+    return isNaN(num) ? NaN : num;
+}
+
+function formatPercentFrom(part, total) {
+    const p = parseNumberFlexible(part);
+    const t = parseNumberFlexible(total);
+    if (isNaN(p) || isNaN(t) || t <= 0) return null;
+    return getPerc(p, t).toFixed(1).replace('.', ',');
+}
+
+// Fallback: find header index/key by relaxed patterns
+function findHeaderKey(headers, patterns) {
+    if (!headers || !headers.length) return null;
+    const lowHeaders = headers.map(h => (h || '').toString().toLowerCase());
+    for (const pat of patterns) {
+        for (let i = 0; i < lowHeaders.length; i++) {
+            if (!lowHeaders[i]) continue;
+            if (lowHeaders[i].indexOf(pat) !== -1) return headers[i];
+        }
+    }
+    return null;
+}
+
+// Render a small debug panel showing header->mapped keys and the processed `dados` object.
+// ... debug panel removed
 
 // ========================
 // GERAÇÃO DOS BLOCOS
@@ -220,6 +280,162 @@ function gerarBloco3(dados) {
     return texto;
 }
 
+// ========================
+// BLOCO 4 – Saúde e condicionalidades
+// ========================
+function gerarBloco4(dados) {
+    const totalFamPBF0a6 = dados["fam_pbf_0a6"] || 0;
+
+    const semAcompanhamentoNutricional = dados["nao_acomp_nutricional_0a7"] || 0;
+    const semVacinacao = dados["nao_vacinacao_0a7"] || 0;
+    const semPreNatalAdequado = dados["nao_prenatal_adequad"] || 0;
+
+    let texto = `**Bloco 4. Acesso a Serviços de Saúde e Cuidados**\n\n`;
+
+    texto += `Este bloco apresenta dados sobre o cumprimento das **condicionalidades de saúde do Programa Bolsa Família (PBF)**, com foco nas famílias com crianças de 0 a 6 anos. O não cumprimento dessas condicionalidades pode indicar barreiras de acesso aos serviços básicos de saúde e comprometer o desenvolvimento infantil, especialmente entre a população mais vulnerável.\n\n`;
+
+    if (semAcompanhamentoNutricional > 0) {
+        if (totalFamPBF0a6 > 0) {
+            const percNutri = formatPercentFrom(semAcompanhamentoNutricional, totalFamPBF0a6);
+            texto += `No município, **${formatNumber(semAcompanhamentoNutricional)} famílias com crianças de 0 a 6 anos beneficiárias do PBF não realizaram o acompanhamento nutricional**, o que representa **${percNutri}% do total de beneficiárias com crianças pequenas**. Isso pode sinalizar falhas no acesso ou no monitoramento territorial da atenção básica à saúde.\n\n`;
+        } else {
+            texto += `No município, **${formatNumber(semAcompanhamentoNutricional)} famílias com crianças de 0 a 6 anos beneficiárias do PBF não realizaram o acompanhamento nutricional**. (Total de famílias PBF com crianças pequenas ausente nos dados, portanto não foi possível calcular percentual.)\n\n`;
+        }
+    }
+
+    if (semVacinacao > 0) {
+        if (totalFamPBF0a6 > 0) {
+            const percVacina = formatPercentFrom(semVacinacao, totalFamPBF0a6);
+            texto += `Além disso, **${formatNumber(semVacinacao)} famílias com crianças pequenas beneficiárias do PBF não cumpriram a condicionalidade de vacinação**, o que equivale a **${percVacina}% do total desse público**. A imunização em atraso ou não realizada exige ação intersetorial urgente entre saúde, assistência social e escolas.\n\n`;
+        } else {
+            texto += `Além disso, **${formatNumber(semVacinacao)} famílias com crianças pequenas beneficiárias do PBF não cumpriram a condicionalidade de vacinação**. (Total de famílias PBF com crianças pequenas ausente nos dados, portanto não foi possível calcular percentual.)\n\n`;
+        }
+    }
+
+    if (semPreNatalAdequado > 0) {
+        texto += `Em relação às gestantes, **${formatNumber(semPreNatalAdequado)} famílias relataram ausência de pré-natal adequado**, descumprindo também condicionalidade de saúde essencial para o bem-estar materno-infantil.\n\n`;
+    }
+
+    return texto;
+}
+
+// ========================
+// BLOCO 5 – Violações de direitos e proteção
+// ========================
+function gerarBloco5(dados) {
+    const violFisica = dados["viol_fisica_0a9"] || 0;
+    const violPsico = dados["viol_psicologica_0a9"] || 0;
+    const violSexual = dados["viol_sexual_0a9"] || 0;
+    const negligencia = dados["neglig_abandono_0a9"] || 0;
+    const acolhimento = dados["acolhimento_0a17_mun"] || 0;
+
+    let texto = `**Bloco 5. Violações de direitos e proteção**\n\n`;
+
+    texto += `Este bloco evidencia a presença de **violações graves de direitos de crianças e adolescentes**, sobretudo na primeira infância. Os dados reforçam a urgência de uma **resposta intersetorial articulada** entre os sistemas de assistência social, saúde, educação, segurança pública e justiça. Além disso, apontam para a importância de estratégias preventivas e de apoio às famílias nos territórios.\n\n`;
+
+    if (violFisica) {
+        texto += `Foram registradas **${formatNumber(violFisica)} situações de violência física contra crianças de 0 a 9 anos**, revelando a urgência de ações de prevenção, proteção e responsabilização nos territórios afetados.\n\n`;
+    }
+
+    if (violPsico) {
+        texto += `Também ocorreram **${formatNumber(violPsico)} casos de violência psicológica**, forma muitas vezes invisibilizada, mas com impactos profundos no desenvolvimento emocional e relacional das crianças.\n\n`;
+    }
+
+    if (violSexual) {
+        texto += `A gravidade se acentua com os **${formatNumber(violSexual)} registros de violência sexual** contra crianças de até 9 anos — um dado alarmante que exige resposta imediata dos órgãos de proteção, com prioridade absoluta na escuta protegida e encaminhamento adequado.\n\n`;
+    }
+
+    if (negligencia) {
+        texto += `Além disso, **${formatNumber(negligencia)} ocorrências de negligência ou abandono** foram notificadas, indicando rupturas na capacidade protetiva das famílias e demandando intervenções coordenadas do CRAS, Conselho Tutelar e rede de apoio local.\n\n`;
+    }
+
+    if (acolhimento) {
+        texto += `Por fim, o município contabilizou **${formatNumber(acolhimento)} crianças e adolescentes em situação de acolhimento institucional ou familiar**, reflexo das violações anteriores e da ausência de alternativas de cuidado e suporte adequadas no território.\n\n`;
+    }
+
+    return texto;
+}
+
+// ========================
+// BLOCO FINAL – ALERTAS E PRIORIDADES
+// ========================
+function gerarBlocoAlertas(dados) {
+    const alerts = [];
+
+    const fam0a6 = parseNumberFlexible(dados["fam-0a6_mun"]);
+    const fam0a6Desat = parseNumberFlexible(dados["fam-0a6-desatualizadas_mun"]);
+    const nFamCad = parseNumberFlexible(dados["n_familias_cadunico_mun"]);
+
+    // avoid division by zero
+    const safePct = (num, den) => {
+        const n = parseNumberFlexible(num);
+        const d = parseNumberFlexible(den);
+        if (isNaN(n) || isNaN(d) || d === 0) return 0;
+        return (n / d) * 100;
+    };
+
+    // Cadastro desatualizado
+    const percDesatualizadas = safePct(fam0a6Desat, fam0a6);
+    if (percDesatualizadas >= 30) {
+        alerts.push(`🔴 **Cadastro desatualizado:** Mais de 30% das famílias com crianças pequenas estão com o Cadastro Único desatualizado (${percDesatualizadas.toFixed(1)}%). É fundamental intensificar a busca ativa e mutirões de atualização para garantir o acesso a benefícios e serviços.`);
+    }
+
+    // Frequência escolar e acesso à educação
+    const percForaEscola = safePct(dados["fam-4a6-fora-escola_mun"], fam0a6);
+    if (percForaEscola >= 5) {
+        alerts.push(`🟠 **Frequência escolar:** ${percForaEscola.toFixed(1)}% das famílias com crianças de 4 a 6 anos estão fora da escola. Recomenda-se articulação imediata com a rede de educação para identificar causas e encaminhar soluções.`);
+    }
+
+    // Condicionalidades de saúde
+    const percSemAcompNutri = safePct(dados["nao_acomp_nutricional_0a7"], dados["fam_pbf_0a6"]);
+    if (percSemAcompNutri >= 25) {
+        alerts.push(`🟠 **Condicionalidade de nutrição:** ${percSemAcompNutri.toFixed(1)}% das famílias com crianças pequenas beneficiárias do PBF estão sem acompanhamento nutricional registrado. CRAS e Saúde devem alinhar estratégias para garantir essa cobertura.`);
+    }
+
+    const percSemVacina = safePct(dados["nao_vacinacao_0a7"], dados["fam_pbf_0a6"]);
+    if (percSemVacina >= 20) {
+        alerts.push(`🟠 **Vacinação incompleta:** ${percSemVacina.toFixed(1)}% das famílias com crianças pequenas no PBF apresentam atraso vacinal. Reforçar o acompanhamento conjunto com a Atenção Básica.`);
+    }
+
+    // Trabalho infantil
+    const percTI = safePct(dados["fam_trabalho_infantil_mun"], nFamCad);
+    if (percTI >= 3) {
+        alerts.push(`🔴 **Trabalho infantil:** ${formatNumber(dados["fam_trabalho_infantil_mun"])} famílias estão em situação de trabalho infantil (${percTI.toFixed(1)}%). O CRAS deve priorizar abordagens intersetoriais com foco em proteção e reintegração escolar.`);
+    }
+
+    // Violência
+    const totalViolencia = ["viol_fisica_0a9", "viol_psicologica_0a9", "viol_sexual_0a9", "neglig_abandono_0a9"].reduce((sum, key) => sum + (parseNumberFlexible(dados[key]) || 0), 0);
+    if (totalViolencia >= 5) {
+        alerts.push(`🔴 **Violações de direitos:** Foram registrados ${formatNumber(totalViolencia)} casos graves de violência contra crianças. É urgente o fortalecimento dos fluxos com o Conselho Tutelar e a rede de proteção.`);
+    }
+
+    // GPTE
+    const percGPTE = safePct(dados["fam-gpte-0a6"], fam0a6);
+    if (percGPTE >= 20) {
+        alerts.push(`🟡 **Territórios prioritários:** ${percGPTE.toFixed(1)}% das famílias com crianças pequenas vivem em áreas com Grandes Problemas e Tradições Específicas (GPTE). O planejamento do CRAS deve priorizar esses territórios com estratégias específicas.`);
+    }
+
+    // Additional recommended alert: high share of families without employed members
+    const percSemEmprego = safePct(dados["fam-0a6-sem-ocupado_mun"], fam0a6);
+    if (percSemEmprego >= 40) {
+        alerts.push(`🔴 **Risco socioeconômico elevado:** ${percSemEmprego.toFixed(1)}% das famílias com crianças pequenas não possuem nenhum integrante ocupado. Priorizar ações de inclusão produtiva e proteção social.`);
+    }
+
+    // Generate final text
+    let texto = `**🔎 Bloco Final – Alertas e Prioridades para Ação Intersetorial**\n\n`;
+    texto += `A seguir, apresentamos os principais alertas identificados com base nos dados do município. Eles representam **sinais de alerta para o planejamento territorial do CRAS**, indicando pontos críticos que demandam atenção imediata ou monitoramento contínuo.\n\n`;
+
+    if (alerts.length === 0) {
+        texto += `✅ Não foram identificados alertas críticos com os dados disponíveis. Ainda assim, recomenda-se manter o monitoramento ativo e revisar os protocolos de acompanhamento das famílias com crianças pequenas.\n\n`;
+    } else {
+        alerts.forEach((alert) => {
+            texto += `${alert}\n\n`;
+        });
+    }
+
+    return texto;
+}
+
 // =========================
 // LEITURA DO ARQUIVO EXCEL
 // =========================
@@ -265,31 +481,44 @@ document.getElementById('fileInput').addEventListener('change', async function (
 
             const dados = {};
             for (let i = 0; i < header.length; i++) {
-                if (header[i]) {
-                    const rawKey = String(header[i]).trim();
-                    const key = rawKey;
-                    const value = values[i];
+                if (!header[i]) continue;
+                const rawKey = String(header[i]).trim();
+                const mapped = canonicalKeyFromHeader(rawKey);
+                const key = mapped || rawKey;
+                const value = values[i];
 
-                    // Preserve textual fields for CRAS and Municipio
-                    if (key.toLowerCase() === 'cras' || key.toLowerCase() === 'municipio') {
-                        dados[key] = value !== undefined && value !== null ? String(value).trim() : 'N/A';
-                        continue;
-                    }
+                // Preserve textual fields for CRAS and Municipio (mapped or raw)
+                if (String(key).toLowerCase() === 'cras' || String(key).toLowerCase() === 'municipio') {
+                    dados[key] = value !== undefined && value !== null ? String(value).trim() : 'N/A';
+                    continue;
+                }
 
-                    // Try to coerce numeric values. Accept comma as decimal separator.
-                    if (typeof value === 'number') {
-                        dados[key] = value;
-                    } else if (value === undefined || value === null || String(value).trim() === '') {
-                        dados[key] = 0;
-                    } else {
-                        const normalized = String(value).replace(/\./g, '').replace(',', '.').trim();
-                        const num = Number(normalized);
-                        dados[key] = isNaN(num) ? 0 : num;
-                    }
+                // Try to coerce numeric values. Accept comma as decimal separator.
+                if (typeof value === 'number') {
+                    dados[key] = value;
+                } else if (value === undefined || value === null || String(value).trim() === '') {
+                    dados[key] = 0;
+                } else {
+                    const normalized = String(value).replace(/\./g, '').replace(',', '.').trim();
+                    const num = Number(normalized);
+                    dados[key] = isNaN(num) ? 0 : num;
+                }
+            }
+            // If fam_pbf_0a6 wasn't mapped, try a relaxed fallback search in headers
+            if (!dados['fam_pbf_0a6']) {
+                const fallbackKey = findHeaderKey(header, ['pbf', 'fam_pbf', 'familias pbf', 'total pbf', 'familias beneficiarias', 'pbf_0a6', 'pbf0a6', 'familias pbf 0a6', 'fam pbf']);
+                if (fallbackKey) {
+                    const idx = header.indexOf(fallbackKey);
+                    const rawVal = values[idx];
+                    const num = parseNumberFlexible(rawVal);
+                    if (!isNaN(num)) dados['fam_pbf_0a6'] = num;
                 }
             }
 
-            console.log('Dados processados:', dados);
+            // Collect mapping info for debug (not shown)
+            const mappedKeys = header.map(h => ({ raw: h, mapped: canonicalKeyFromHeader(h) || null }));
+
+                    console.log('Dados processados:', dados);
 
             // Gerar e exibir os blocos
             const bloco1Element = document.getElementById('interpretacao-bloco-1');
@@ -313,6 +542,30 @@ document.getElementById('fileInput').addEventListener('change', async function (
             if (bloco3Element) {
                 const textoBloco3 = gerarBloco3(dados);
                 bloco3Element.innerHTML = textoBloco3
+                    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+                    .replace(/\n/g, "<br>");
+            }
+
+            const bloco4Element = document.getElementById('interpretacao-bloco-4');
+            if (bloco4Element) {
+                const textoBloco4 = gerarBloco4(dados);
+                bloco4Element.innerHTML = textoBloco4
+                    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+                    .replace(/\n/g, "<br>");
+            }
+
+            const bloco5Element = document.getElementById('interpretacao-bloco-5');
+            if (bloco5Element) {
+                const textoBloco5 = gerarBloco5(dados);
+                bloco5Element.innerHTML = textoBloco5
+                    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+                    .replace(/\n/g, "<br>");
+            }
+
+            const blocoAlertasElement = document.getElementById('interpretacao-bloco-alertas');
+            if (blocoAlertasElement) {
+                const textoAlertas = gerarBlocoAlertas(dados);
+                blocoAlertasElement.innerHTML = textoAlertas
                     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
                     .replace(/\n/g, "<br>");
             }
