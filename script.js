@@ -6,10 +6,9 @@ function getPerc(part, total) {
 }
 
 function formatNumber(n) {
-    if (typeof n !== 'number') {
-        return '0';
-    }
-    return Math.round(n).toLocaleString('pt-BR');
+  const num = typeof n === 'number' ? n : parseNumberFlexible(n);
+  if (isNaN(num)) return '0';
+  return Math.round(num).toLocaleString('pt-BR');
 }
 
 function formatPercent(p) {
@@ -643,6 +642,7 @@ function generatePrintableReport(dados) {
 document.getElementById('btnPrint').addEventListener('click', () => {
         generatePrintableReport(window.__lastDados);
 });
+
 
 
 
