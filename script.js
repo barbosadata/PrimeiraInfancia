@@ -1,4 +1,4 @@
-/ =========================
+// =========================
 // FUNÇÕES AUXILIARES GERAIS
 // =========================
 function getPerc(part, total) {
@@ -649,3 +649,4 @@ function generatePrintableReport(dados) {
 document.getElementById('btnPrint').addEventListener('click', () => {
         generatePrintableReport(window.__lastDados);
 });
+
