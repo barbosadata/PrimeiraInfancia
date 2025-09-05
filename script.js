@@ -13,10 +13,9 @@ function formatNumber(n) {
 }
 
 function formatPercent(p) {
-    if (typeof p !== 'number') {
-        return '0,0';
-    }
-    return getPerc(p, 1).toFixed(1).replace(".", ",");
+  const num = typeof p === 'number' ? p : parseNumberFlexible(p);
+  if (isNaN(num)) return '0,0';
+  return Number(num).toFixed(1).replace('.', ',');
 }
 
 function showError(message) {
@@ -649,4 +648,5 @@ function generatePrintableReport(dados) {
 document.getElementById('btnPrint').addEventListener('click', () => {
         generatePrintableReport(window.__lastDados);
 });
+
 
