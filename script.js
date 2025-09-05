@@ -26,12 +26,7 @@ function showError(message) {
     errorDiv.textContent = 'Erro: ' + message;
     document.querySelector('.container').appendChild(errorDiv);
 }
-    // helper: format percent from part and total (returns string like '12,3')
-    function formatPercentFrom(part, total) {
-        if (typeof part !== 'number' || typeof total !== 'number' || total <= 0) return null;
-        return getPerc(part, total).toFixed(1).replace('.', ',');
-    }
-
+  
 function clearErrors() {
     const errorDivs = document.querySelectorAll('div[style*="color: red"]');
     errorDivs.forEach(div => div.remove());
@@ -648,6 +643,7 @@ function generatePrintableReport(dados) {
 document.getElementById('btnPrint').addEventListener('click', () => {
         generatePrintableReport(window.__lastDados);
 });
+
 
 
 
