@@ -1,56 +1,41 @@
-// =========================
+/ =========================
 // FUNÇÕES AUXILIARES GERAIS
 // =========================
-
-// Parser flexível: aceita "1.234,56", "1234.56" ou número
-function parseNumberFlexible(v) {
-  if (typeof v === 'number') return v;
-  if (v === undefined || v === null) return NaN;
-  const s = String(v).trim();
-  if (s === '') return NaN;
-  const normalized = s.replace(/\./g, '').replace(',', '.');
-  const num = Number(normalized);
-  return isNaN(num) ? NaN : num;
-}
-
-// Cálculo (%) numérico
 function getPerc(part, total) {
-  const p = parseNumberFlexible(part);
-  const t = parseNumberFlexible(total);
-  return t > 0 ? (p / t) * 100 : 0;
+    return total > 0 ? (part / total) * 100 : 0;
 }
 
-// Formata inteiro pt-BR
 function formatNumber(n) {
-  const num = parseNumberFlexible(n);
-  if (isNaN(num)) return '0';
-  return Math.round(num).toLocaleString('pt-BR');
+    if (typeof n !== 'number') {
+        return '0';
+    }
+    return Math.round(n).toLocaleString('pt-BR');
 }
 
-// Formata um percentual já calculado (ex.: 17.8 -> "17,8")
 function formatPercent(p) {
-  const num = parseNumberFlexible(p);
-  if (isNaN(num)) return '0,0';
-  return Number(num).toFixed(1).replace('.', ',');
-}
-
-// Calcula e já formata (ex.: 12 e 50 -> "24,0")
-function formatPercentFrom(part, total) {
-  return formatPercent(getPerc(part, total));
+    if (typeof p !== 'number') {
+        return '0,0';
+    }
+    return getPerc(p, 1).toFixed(1).replace(".", ",");
 }
 
 function showError(message) {
-  const errorDiv = document.createElement('div');
-  errorDiv.style.color = 'red';
-  errorDiv.style.padding = '10px';
-  errorDiv.style.marginTop = '10px';
-  errorDiv.textContent = 'Erro: ' + message;
-  document.querySelector('.container').appendChild(errorDiv);
+    const errorDiv = document.createElement('div');
+    errorDiv.style.color = 'red';
+    errorDiv.style.padding = '10px';
+    errorDiv.style.marginTop = '10px';
+    errorDiv.textContent = 'Erro: ' + message;
+    document.querySelector('.container').appendChild(errorDiv);
 }
+    // helper: format percent from part and total (returns string like '12,3')
+    function formatPercentFrom(part, total) {
+        if (typeof part !== 'number' || typeof total !== 'number' || total <= 0) return null;
+        return getPerc(part, total).toFixed(1).replace('.', ',');
+    }
 
 function clearErrors() {
-  const errorDivs = document.querySelectorAll('div[style*="color: red"]');
-  errorDivs.forEach(div => div.remove());
+    const errorDivs = document.querySelectorAll('div[style*="color: red"]');
+    errorDivs.forEach(div => div.remove());
 }
 
 // Normalize incoming Excel header text to a canonical key when possible.
@@ -664,8 +649,3 @@ function generatePrintableReport(dados) {
 document.getElementById('btnPrint').addEventListener('click', () => {
         generatePrintableReport(window.__lastDados);
 });
-
-
-
-
-
