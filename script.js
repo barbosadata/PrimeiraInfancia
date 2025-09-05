@@ -12,7 +12,11 @@ function formatNumber(n) {
     return Math.round(n).toLocaleString('pt-BR');
 }
 
-function formatPercent(p) {
+function function formatPercent(p) {
+  const num = typeof p === 'number' ? p : parseNumberFlexible(p);
+  if (isNaN(num)) return '0,0';
+  return Number(num).toFixed(1).replace('.', ','); // só formatação
+} {
     if (typeof p !== 'number') {
         return '0,0';
     }
@@ -649,5 +653,6 @@ function generatePrintableReport(dados) {
 document.getElementById('btnPrint').addEventListener('click', () => {
         generatePrintableReport(window.__lastDados);
 });
+
 
 
