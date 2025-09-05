@@ -160,7 +160,7 @@ function gerarBloco1(dados) {
     // Montagem do texto de interpretação
     let texto = "**Perfil do território e indicadores sociais**\n\n";
     
-    texto += `O território do **${munName}** está localizado no município de **${municipio}**, que possui **${formatNumber(total_cad_mun)}** famílias inscritas no Cadastro Único — representando ${formatPercent(getPerc(total_cad_mun, total_cad_estado))}% do total estadual e ${formatPercent(getPerc(total_cad_mun, total_cad_br))}% do total nacional.\n\n`;
+    texto += `O território do **${munName}** está localizado no município de **${municipio}**, que possui **${formatNumber(total_cad_mun)}** famílias inscritas no Cadastro Único — representando ${formatPercentFrom(total_cad_mun, total_cad_estado)}% do total estadual e ${formatPercentFrom(total_cad_mun, total_cad_br)}% do total nacional.\n\n`;
     
     texto += `Em relação à atualização cadastral, observa-se que **${formatPercent(perc_cad_des_mun)}%** das famílias estão com cadastros desatualizados, percentual que se mantém próximo à média estadual (${formatPercent(perc_cad_des_estado)}%) e abaixo da nacional (${formatPercent(perc_cad_des_br)}%). No entanto, quando analisamos especificamente as famílias com crianças de 0 a 6 anos, a taxa de desatualização aumenta para **${formatPercent(perc_0a6_des_mun)}%**, superando significativamente a média estadual (${formatPercent(perc_0a6_des_estado)}%) e aproximando-se da nacional (${formatPercent(perc_0a6_des_br)}%).\n\n`;
     
@@ -648,5 +648,6 @@ function generatePrintableReport(dados) {
 document.getElementById('btnPrint').addEventListener('click', () => {
         generatePrintableReport(window.__lastDados);
 });
+
 
 
