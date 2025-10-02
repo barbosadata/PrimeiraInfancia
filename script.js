@@ -221,7 +221,7 @@ function gerarBloco2(dados) {
 
     if (famGPTE0a6 > 0 && totalFam0a6 > 0) {
         const percGPTE = (famGPTE0a6 / totalFam0a6 * 100).toFixed(2);
-        texto += `O dado de **${formatNumber(famGPTE0a6)} famílias com crianças de 0 a 6 anos em territórios com Grandes Problemas e Tradições Específicas (GPTE)** representa **${percGPTE}% das famílias com crianças pequenas**, exigindo respostas territorializadas e culturalmente sensíveis.\n\n`;
+        texto += `O dado de **${formatNumber(famGPTE0a6)} famílias com crianças de 0 a 6 anos em territórios de Grupos Populacionais Tradicionais e Específicos (GPTE)** representa **${percGPTE}% das famílias com crianças pequenas**, exigindo respostas territorializadas e culturalmente sensíveis.\n\n`;
     }
 
     if (fam0a6Desatualizadas > 0 && totalFam0a6 > 0) {
@@ -642,6 +642,7 @@ function generatePrintableReport(dados) {
 document.getElementById('btnPrint').addEventListener('click', () => {
         generatePrintableReport(window.__lastDados);
 });
+
 
 
 
