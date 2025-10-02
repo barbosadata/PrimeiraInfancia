@@ -14,7 +14,7 @@ function formatNumber(n) {
 function formatPercent(p) {
   const num = typeof p === 'number' ? p : parseNumberFlexible(p);
   if (isNaN(num)) return '0,0';
-  return Number(num).toFixed(1).replace('.', ',');
+  return Number(num).toFixed(2).replace('.', ',');
 }
 
 function showError(message) {
@@ -67,7 +67,7 @@ function formatPercentFrom(part, total) {
     const p = parseNumberFlexible(part);
     const t = parseNumberFlexible(total);
     if (isNaN(p) || isNaN(t) || t <= 0) return null;
-    return getPerc(p, t).toFixed(1).replace('.', ',');
+    return getPerc(p, t).toFixed(2).replace('.', ',');
 }
 
 // Fallback: find header index/key by relaxed patterns
@@ -370,30 +370,30 @@ function gerarBlocoAlertas(dados) {
     // Cadastro desatualizado
     const percDesatualizadas = safePct(fam0a6Desat, fam0a6);
     if (percDesatualizadas >= 30) {
-        alerts.push(`🔴 **Cadastro desatualizado:** Mais de 30% das famílias com crianças pequenas estão com o Cadastro Único desatualizado (${percDesatualizadas.toFixed(1)}%). É fundamental intensificar a busca ativa e mutirões de atualização para garantir o acesso a benefícios e serviços.`);
+        alerts.push(`🔴 **Cadastro desatualizado:** Mais de 30% das famílias com crianças pequenas estão com o Cadastro Único desatualizado (${percDesatualizadas.toFixed(2)}%). É fundamental intensificar a busca ativa e mutirões de atualização para garantir o acesso a benefícios e serviços.`);
     }
 
     // Frequência escolar e acesso à educação
     const percForaEscola = safePct(dados["fam-4a6-fora-escola_mun"], fam0a6);
     if (percForaEscola >= 5) {
-        alerts.push(`🟠 **Frequência escolar:** ${percForaEscola.toFixed(1)}% das famílias com crianças de 4 a 6 anos estão fora da escola. Recomenda-se articulação imediata com a rede de educação para identificar causas e encaminhar soluções.`);
+        alerts.push(`🟠 **Frequência escolar:** ${percForaEscola.toFixed(2)}% das famílias com crianças de 4 a 6 anos estão fora da escola. Recomenda-se articulação imediata com a rede de educação para identificar causas e encaminhar soluções.`);
     }
 
     // Condicionalidades de saúde
     const percSemAcompNutri = safePct(dados["nao_acomp_nutricional_0a7"], dados["fam_pbf_0a6"]);
     if (percSemAcompNutri >= 25) {
-        alerts.push(`🟠 **Condicionalidade de nutrição:** ${percSemAcompNutri.toFixed(1)}% das famílias com crianças pequenas beneficiárias do PBF estão sem acompanhamento nutricional registrado. CRAS e Saúde devem alinhar estratégias para garantir essa cobertura.`);
+        alerts.push(`🟠 **Condicionalidade de nutrição:** ${percSemAcompNutri.toFixed(2)}% das famílias com crianças pequenas beneficiárias do PBF estão sem acompanhamento nutricional registrado. CRAS e Saúde devem alinhar estratégias para garantir essa cobertura.`);
     }
 
     const percSemVacina = safePct(dados["nao_vacinacao_0a7"], dados["fam_pbf_0a6"]);
     if (percSemVacina >= 20) {
-        alerts.push(`🟠 **Vacinação incompleta:** ${percSemVacina.toFixed(1)}% das famílias com crianças pequenas no PBF apresentam atraso vacinal. Reforçar o acompanhamento conjunto com a Atenção Básica.`);
+        alerts.push(`🟠 **Vacinação incompleta:** ${percSemVacina.toFixed(2)}% das famílias com crianças pequenas no PBF apresentam atraso vacinal. Reforçar o acompanhamento conjunto com a Atenção Básica.`);
     }
 
     // Trabalho infantil
     const percTI = safePct(dados["fam_trabalho_infantil_mun"], nFamCad);
     if (percTI >= 3) {
-        alerts.push(`🔴 **Trabalho infantil:** ${formatNumber(dados["fam_trabalho_infantil_mun"])} famílias estão em situação de trabalho infantil (${percTI.toFixed(1)}%). O CRAS deve priorizar abordagens intersetoriais com foco em proteção e reintegração escolar.`);
+        alerts.push(`🔴 **Trabalho infantil:** ${formatNumber(dados["fam_trabalho_infantil_mun"])} famílias estão em situação de trabalho infantil (${percTI.toFixed(2)}%). O CRAS deve priorizar abordagens intersetoriais com foco em proteção e reintegração escolar.`);
     }
 
     // Violência
@@ -405,13 +405,13 @@ function gerarBlocoAlertas(dados) {
     // GPTE
     const percGPTE = safePct(dados["fam-gpte-0a6"], fam0a6);
     if (percGPTE >= 20) {
-        alerts.push(`🟡 **Territórios prioritários:** ${percGPTE.toFixed(1)}% das famílias com crianças pequenas vivem em áreas com Grandes Problemas e Tradições Específicas (GPTE). O planejamento do CRAS deve priorizar esses territórios com estratégias específicas.`);
+        alerts.push(`🟡 **Territórios prioritários:** ${percGPTE.toFixed(2)}% das famílias com crianças pequenas vivem em áreas com Grandes Problemas e Tradições Específicas (GPTE). O planejamento do CRAS deve priorizar esses territórios com estratégias específicas.`);
     }
 
     // Additional recommended alert: high share of families without employed members
     const percSemEmprego = safePct(dados["fam-0a6-sem-ocupado_mun"], fam0a6);
     if (percSemEmprego >= 40) {
-        alerts.push(`🔴 **Risco socioeconômico elevado:** ${percSemEmprego.toFixed(1)}% das famílias com crianças pequenas não possuem nenhum integrante ocupado. Priorizar ações de inclusão produtiva e proteção social.`);
+        alerts.push(`🔴 **Risco socioeconômico elevado:** ${percSemEmprego.toFixed(2)}% das famílias com crianças pequenas não possuem nenhum integrante ocupado. Priorizar ações de inclusão produtiva e proteção social.`);
     }
 
     // Generate final text
@@ -642,6 +642,7 @@ function generatePrintableReport(dados) {
 document.getElementById('btnPrint').addEventListener('click', () => {
         generatePrintableReport(window.__lastDados);
 });
+
 
 
 
