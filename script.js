@@ -158,7 +158,7 @@ function gerarBloco1(dados) {
     
     texto += `Em relação à atualização cadastral, observa-se que **${formatPercent(perc_cad_des_mun)}%** das famílias estão com cadastros desatualizados, percentual que se mantém próximo à média estadual (${formatPercent(perc_cad_des_estado)}%) e abaixo da nacional (${formatPercent(perc_cad_des_br)}%). No entanto, quando analisamos especificamente as famílias com crianças de 0 a 6 anos, a taxa de desatualização aumenta para **${formatPercent(perc_0a6_des_mun)}%**, superando significativamente a média estadual (${formatPercent(perc_0a6_des_estado)}%) e aproximando-se da nacional (${formatPercent(perc_0a6_des_br)}%).\n\n`;
     
-    texto += `O impacto do Programa Bolsa Família é notável no território. Antes do benefício, **${formatPercent(perc_pobreza_pre_mun)}%** das famílias encontravam-se em situação de pobreza, índice inferior à média estadual (${formatPercent(perc_pobreza_pre_estado)}%) mas superior à nacional (${formatPercent(perc_pobreza_pre_br)}%). Após o recebimento do benefício, esta taxa reduziu para **${formatPercent(perc_pobreza_pos_mun)}%**, embora ainda permaneça acima das médias estadual (${formatPercent(perc_pobreza_pos_estado)}%) e nacional (${formatPercent(perc_pobreza_pos_br)}%).\n\n`;
+    texto += `O impacto do Programa Bolsa Família (PBF) é notável no território. Antes do benefício, **${formatPercent(perc_pobreza_pre_mun)}%** das famílias encontravam-se em situação de pobreza, índice inferior à média estadual (${formatPercent(perc_pobreza_pre_estado)}%) mas superior à nacional (${formatPercent(perc_pobreza_pre_br)}%). Após o recebimento do benefício, esta taxa reduziu para **${formatPercent(perc_pobreza_pos_mun)}%**, embora ainda permaneça acima das médias estadual (${formatPercent(perc_pobreza_pos_estado)}%) e nacional (${formatPercent(perc_pobreza_pos_br)}%).\n\n`;
     
     texto += `Um dado preocupante é que **${formatPercent(perc_pi_pobreza_mun)}%** das famílias com crianças na primeira infância permanecem em situação de pobreza, percentual consideravelmente superior tanto à média estadual (${formatPercent(perc_pi_pobreza_estado)}%) quanto à nacional (${formatPercent(perc_pi_pobreza_br)}%).\n\n`;
     
@@ -201,7 +201,7 @@ function gerarBloco2(dados) {
 
     if (pcdCuidados > 0 && totalFam0a6 > 0) {
         const percPCD = (pcdCuidados / totalFam0a6 * 100).toFixed(2);
-        texto += `Há **${formatNumber(pcdCuidados)} famílias com crianças pequenas com deficiência que demandam cuidados permanentes**, representando **${percPCD}% do total de famílias com crianças de 0 a 6 anos** — um grupo que demanda atenção integral e estratégias específicas de apoio.\n\n`;
+        texto += `Há **${formatNumber(pcdCuidados)} famílias com crianças pequenas com deficiência que demandam cuidados permanentes**, representando **${percPCD}% do total de famílias com crianças de 0 a 6 anos** — um grupo prioritário do Trabalho Social com Famílias e Territórios no PAIF e/ou acompanhamento pelos Serviços Complementares, que demanda atenção integral e estratégias específicas de apoio.\n\n`;
     }
 
     if (fam0a6SemOcupado > 0 && totalFam0a6 > 0) {
@@ -233,7 +233,7 @@ function gerarBloco2(dados) {
 }
 
 // ========================
-// BLOCO 3 – Acesso à educação e desenvolvimento infantil
+// BLOCO 3 – Acesso à educação infantil e condicionalidades educacionais do PBF
 // ========================
 function gerarBloco3(dados) {
     const totalFam0a6 = dados["fam-0a6_mun"] || 0;
@@ -243,9 +243,9 @@ function gerarBloco3(dados) {
     const famCom4a6ForaEscola = dados["fam-com-4-a-6-fora-da-escola"] || 0;
     const baixaFrequencia4a6 = dados["nao_frequencia_4a6"] || 0;
 
-    let texto = `**Bloco 3. Acesso à Educação e Desenvolvimento Infantil**\n\n`;
+    let texto = `**Bloco 3. Acesso à Educação e condicionalidades educacionais do PBF**\n\n`;
 
-    texto += `O direito à educação e à aprendizagem precoce é um dos pilares para o desenvolvimento integral das crianças. Este bloco apresenta dados que evidenciam desafios importantes no acesso e na permanência escolar de crianças pequenas e de suas famílias, com implicações diretas sobre suas trajetórias educacionais e sociais.\n\n`;
+    texto += `O direito à educação e à aprendizagem precoce **condicionalidades de educação do PBF** e um dos pilares para o desenvolvimento integral das crianças. Este bloco apresenta dados que evidenciam desafios importantes no acesso e na permanência escolar de crianças pequenas e de suas famílias, com implicações diretas sobre suas trajetórias educacionais e sociais.\n\n`;
 
     if (foraEscola0a6 > 0 && totalFam0a6 > 0) {
         const perc0a6 = formatPercent(foraEscola0a6 / totalFam0a6);
@@ -267,14 +267,14 @@ function gerarBloco3(dados) {
     }
 
     if (famCom4a6ForaEscola > 0) {
-        texto += `Um dado crítico: **${formatNumber(famCom4a6ForaEscola)} famílias** possuem crianças de 4 a 6 anos fora da escola — um grupo que requer priorização nas estratégias de matrícula e retenção escolar.\n\n`;
+        texto += `Um dado crítico: **${formatNumber(famCom4a6ForaEscola)} famílias** possuem crianças de 4 a 6 anos fora da escola — um grupo que prioritátio nas estratégias de matrícula e retenção escolar.\n\n`;
     }
 
     return texto;
 }
 
 // ========================
-// BLOCO 4 – Saúde e condicionalidades
+// BLOCO 4 – Acesso à saúde e condicionalidades do PBF
 // ========================
 function gerarBloco4(dados) {
     const totalFamPBF0a6 = dados["fam_pbf_0a6"] || 0;
@@ -283,9 +283,9 @@ function gerarBloco4(dados) {
     const semVacinacao = dados["nao_vacinacao_0a7"] || 0;
     const semPreNatalAdequado = dados["nao_prenatal_adequad"] || 0;
 
-    let texto = `**Bloco 4. Acesso a Serviços de Saúde e Cuidados**\n\n`;
+    let texto = `**Bloco 4. Acesso aos Serviços de Saúde e Condicionalidades de Saúde**\n\n`;
 
-    texto += `Este bloco apresenta dados sobre o cumprimento das **condicionalidades de saúde do Programa Bolsa Família (PBF)**, com foco nas famílias com crianças de 0 a 6 anos. O não cumprimento dessas condicionalidades pode indicar barreiras de acesso aos serviços básicos de saúde e comprometer o desenvolvimento infantil, especialmente entre a população mais vulnerável.\n\n`;
+    texto += `Este bloco apresenta dados sobre o cumprimento das **condicionalidades de saúde do PBF**, com foco nas famílias com crianças de 0 a 6 anos. O não cumprimento dessas condicionalidades pode indicar barreiras de acesso aos serviços básicos de saúde e comprometer o desenvolvimento infantil, especialmente entre a população mais vulnerável.\n\n`;
 
     if (semAcompanhamentoNutricional > 0) {
         if (totalFamPBF0a6 > 0) {
@@ -642,6 +642,7 @@ function generatePrintableReport(dados) {
 document.getElementById('btnPrint').addEventListener('click', () => {
         generatePrintableReport(window.__lastDados);
 });
+
 
 
 
