@@ -36,7 +36,7 @@ function canonicalKeyFromHeader(raw) {
     if (!raw) return null;
     const low = String(raw).toLowerCase();
     // remove diacritics
-    const norm = low.normalize && low.normalize('NFD') ? low.normalize('NFD').replace(/[ -\u036f]/g, '') : low;
+    const norm = low.normalize && low.normalize('NFD') ? low.normalize('NFD').replace(/[\u0300-\u036f]/g, '') : low;
     // compact to letters+numbers only (underscores used as separators)
     const compact = norm.replace(/[^a-z0-9]/g, '_');
 
@@ -190,6 +190,8 @@ function gerarBloco2(dados) {
 
     texto += `Este bloco reúne dados que revelam **riscos acumulados e vulnerabilidades estruturais** nas famílias com crianças de 0 a 6 anos, o que impacta diretamente suas oportunidades de desenvolvimento.\n\n`;
 
+    // 2.1 Trabalho Infantil
+    texto += `**2.1 Trabalho Infantil**\n\n`;
     if (trabalhoInfantil > 0 && totalFamilias > 0) {
         const percTI = (trabalhoInfantil / totalFamilias * 100).toFixed(2);
         texto += `No município, **${formatNumber(trabalhoInfantil)} famílias estão em situação de trabalho infantil**, o que representa cerca de **${percTI}% do total cadastrado**. Esse dado exige atenção redobrada à atuação articulada entre assistência social, educação e o sistema de garantias.\n\n`;
@@ -197,36 +199,58 @@ function gerarBloco2(dados) {
         if (trabalhoInfantilReferenciada > 0) {
             texto += `Entre essas, **${formatNumber(trabalhoInfantilReferenciada)} foram referenciadas ao CRAS ao longo do ano**, apontando para o potencial (e também o limite) da atuação da Proteção Social Básica nesse enfrentamento.\n\n`;
         }
+    } else {
+        texto += `Não há dados disponíveis sobre trabalho infantil para este município.\n\n`;
     }
 
-    if (pcdCuidados > 0 && totalFam0a6 > 0) {
-        const percPCD = (pcdCuidados / totalFam0a6 * 100).toFixed(2);
-        texto += `Há **${formatNumber(pcdCuidados)} famílias com crianças pequenas com deficiência que demandam cuidados permanentes**, representando **${percPCD}% do total de famílias com crianças de 0 a 6 anos** — um grupo prioritário do Trabalho Social com Famílias e Territórios no PAIF e/ou acompanhamento pelos Serviços Complementares, que demanda atenção integral e estratégias específicas de apoio.\n\n`;
-    }
-
+    // 2.2 Acesso ao Trabalho e Ocupação
+    texto += `**2.2 Acesso ao Trabalho e Ocupação**\n\n`;
     if (fam0a6SemOcupado > 0 && totalFam0a6 > 0) {
         const percSemOcupado = (fam0a6SemOcupado / totalFam0a6 * 100).toFixed(2);
         texto += `Cerca de **${formatNumber(fam0a6SemOcupado)} famílias com crianças de 0 a 6 anos não possuem nenhum integrante ocupado**, o que representa **${percSemOcupado}% dessa população** e pode indicar situações de extrema vulnerabilidade socioeconômica.\n\n`;
     }
-
-    if (fam0a6SemLer > 0 && totalFam0a6 > 0) {
-        const percSemLer = (fam0a6SemLer / totalFam0a6 * 100).toFixed(2);
-        texto += `Além disso, **${formatNumber(fam0a6SemLer)} famílias não contam com nenhum membro alfabetizado**, o que corresponde a **${percSemLer}% das famílias com crianças pequenas** — uma barreira significativa à promoção de estímulos cognitivos no ambiente familiar.\n\n`;
-    }
-
     if (famSemOcupado > 0 && totalFamilias > 0) {
         const percGeralSemOcupado = (famSemOcupado / totalFamilias * 100).toFixed(2);
         texto += `Em termos gerais, **${formatNumber(famSemOcupado)} famílias cadastradas no município não possuem integrantes ocupados**, cerca de **${percGeralSemOcupado}% do total**, reforçando o cenário de vulnerabilidade socioeconômica ampliada.\n\n`;
     }
+    if ((fam0a6SemOcupado === 0 || !totalFam0a6) && (famSemOcupado === 0 || !totalFamilias)) {
+        texto += `Não há dados disponíveis sobre acesso ao trabalho e ocupação para este município.\n\n`;
+    }
 
+    // 2.3 Alfabetização
+    texto += `**2.3 Alfabetização**\n\n`;
+    if (fam0a6SemLer > 0 && totalFam0a6 > 0) {
+        const percSemLer = (fam0a6SemLer / totalFam0a6 * 100).toFixed(2);
+        texto += `**${formatNumber(fam0a6SemLer)} famílias não contam com nenhum membro alfabetizado**, o que corresponde a **${percSemLer}% das famílias com crianças pequenas** — uma barreira significativa à promoção de estímulos cognitivos no ambiente familiar.\n\n`;
+    } else {
+        texto += `Não há dados disponíveis sobre alfabetização para este município.\n\n`;
+    }
+
+    // 2.4 Grupos Populacionais Tradicionais e Específicos (GPTE)
+    texto += `**2.4 Grupos Populacionais Tradicionais e Específicos (GPTE)**\n\n`;
     if (famGPTE0a6 > 0 && totalFam0a6 > 0) {
         const percGPTE = (famGPTE0a6 / totalFam0a6 * 100).toFixed(2);
         texto += `O dado de **${formatNumber(famGPTE0a6)} famílias com crianças de 0 a 6 anos em territórios de Grupos Populacionais Tradicionais e Específicos (GPTE)** representa **${percGPTE}% das famílias com crianças pequenas**, exigindo respostas territorializadas e culturalmente sensíveis.\n\n`;
+    } else {
+        texto += `Não há dados disponíveis sobre GPTE para este município.\n\n`;
     }
 
+    // 2.5 Situação do Cadastro Único
+    texto += `**2.5 Situação do Cadastro Único**\n\n`;
     if (fam0a6Desatualizadas > 0 && totalFam0a6 > 0) {
         const percDesatualizadas = (fam0a6Desatualizadas / totalFam0a6 * 100).toFixed(2);
-        texto += `Por fim, **${formatNumber(fam0a6Desatualizadas)} famílias com crianças de 0 a 6 anos estão com o cadastro desatualizado**, o que representa **${percDesatualizadas}% dessa população** e pode comprometer seu acesso a benefícios e serviços prioritários.\n\n`;
+        texto += `**${formatNumber(fam0a6Desatualizadas)} famílias com crianças de 0 a 6 anos estão com o cadastro desatualizado**, o que representa **${percDesatualizadas}% dessa população** e pode comprometer seu acesso a benefícios e serviços prioritários.\n\n`;
+    } else {
+        texto += `Não há dados disponíveis sobre desatualização do Cadastro Único para este município.\n\n`;
+    }
+
+    // 2.6 Crianças com Deficiência e Necessidade de Cuidados
+    texto += `**2.6 Crianças com Deficiência e Necessidade de Cuidados**\n\n`;
+    if (pcdCuidados > 0 && totalFam0a6 > 0) {
+        const percPCD = (pcdCuidados / totalFam0a6 * 100).toFixed(2);
+        texto += `Há **${formatNumber(pcdCuidados)} famílias com crianças pequenas com deficiência que demandam cuidados permanentes**, representando **${percPCD}% do total de famílias com crianças de 0 a 6 anos** — um grupo prioritário do Trabalho Social com Famílias e Territórios no PAIF e/ou acompanhamento pelos Serviços Complementares, que demanda atenção integral e estratégias específicas de apoio.\n\n`;
+    } else {
+        texto += `Não há dados disponíveis sobre crianças com deficiência e necessidade de cuidados para este município.\n\n`;
     }
 
     return texto;
@@ -245,7 +269,7 @@ function gerarBloco3(dados) {
 
     let texto = `**Bloco 3. Acesso à Educação e condicionalidades educacionais do PBF**\n\n`;
 
-    texto += `O direito à educação e à aprendizagem precoce **condicionalidades de educação do PBF** e um dos pilares para o desenvolvimento integral das crianças. Este bloco apresenta dados que evidenciam desafios importantes no acesso e na permanência escolar de crianças pequenas e de suas famílias, com implicações diretas sobre suas trajetórias educacionais e sociais.\n\n`;
+    texto += `O direito à educação e à aprendizagem precoce **são condicionalidades de educação do PBF** e um dos pilares para o desenvolvimento integral das crianças. Este bloco apresenta dados que evidenciam desafios importantes no acesso e na permanência escolar de crianças pequenas e de suas famílias, com implicações diretas sobre suas trajetórias educacionais e sociais.\n\n`;
 
     if (foraEscola0a6 > 0 && totalFam0a6 > 0) {
         const perc0a6 = formatPercent(foraEscola0a6 / totalFam0a6);
@@ -267,7 +291,7 @@ function gerarBloco3(dados) {
     }
 
     if (famCom4a6ForaEscola > 0) {
-        texto += `Um dado crítico: **${formatNumber(famCom4a6ForaEscola)} famílias** possuem crianças de 4 a 6 anos fora da escola — um grupo que prioritátio nas estratégias de matrícula e retenção escolar.\n\n`;
+        texto += `Um dado crítico: **${formatNumber(famCom4a6ForaEscola)} famílias** possuem crianças de 4 a 6 anos fora da escola — um grupo que é prioritário nas estratégias de matrícula e retenção escolar.\n\n`;
     }
 
     return texto;
@@ -353,7 +377,9 @@ function gerarBloco5(dados) {
 // BLOCO FINAL – ALERTAS E PRIORIDADES
 // ========================
 function gerarBlocoAlertas(dados) {
-    const alerts = [];
+    const alertsCritico = [];
+    const alertsAtencao = [];
+    const alertsMonitoramento = [];
 
     const fam0a6 = parseNumberFlexible(dados["fam-0a6_mun"]);
     const fam0a6Desat = parseNumberFlexible(dados["fam-0a6-desatualizadas_mun"]);
@@ -367,63 +393,140 @@ function gerarBlocoAlertas(dados) {
         return (n / d) * 100;
     };
 
+    // 🔴 CRÍTICO
     // Cadastro desatualizado
     const percDesatualizadas = safePct(fam0a6Desat, fam0a6);
     if (percDesatualizadas >= 30) {
-        alerts.push(`🔴 **Cadastro desatualizado:** Mais de 30% das famílias com crianças pequenas estão com o Cadastro Único desatualizado (${percDesatualizadas.toFixed(2)}%). É fundamental intensificar a busca ativa e mutirões de atualização para garantir o acesso a benefícios e serviços.`);
-    }
-
-    // Frequência escolar e acesso à educação
-    const percForaEscola = safePct(dados["fam-4a6-fora-escola_mun"], fam0a6);
-    if (percForaEscola >= 5) {
-        alerts.push(`🟠 **Frequência escolar:** ${percForaEscola.toFixed(2)}% das famílias com crianças de 4 a 6 anos estão fora da escola. Recomenda-se articulação imediata com a rede de educação para identificar causas e encaminhar soluções.`);
-    }
-
-    // Condicionalidades de saúde
-    const percSemAcompNutri = safePct(dados["nao_acomp_nutricional_0a7"], dados["fam_pbf_0a6"]);
-    if (percSemAcompNutri >= 25) {
-        alerts.push(`🟠 **Condicionalidade de nutrição:** ${percSemAcompNutri.toFixed(2)}% das famílias com crianças pequenas beneficiárias do PBF estão sem acompanhamento nutricional registrado. CRAS e Saúde devem alinhar estratégias para garantir essa cobertura.`);
-    }
-
-    const percSemVacina = safePct(dados["nao_vacinacao_0a7"], dados["fam_pbf_0a6"]);
-    if (percSemVacina >= 20) {
-        alerts.push(`🟠 **Vacinação incompleta:** ${percSemVacina.toFixed(2)}% das famílias com crianças pequenas no PBF apresentam atraso vacinal. Reforçar o acompanhamento conjunto com a Atenção Básica.`);
+        alertsCritico.push(`🔴 **Cadastro desatualizado:** Mais de 30% das famílias com crianças pequenas estão com o Cadastro Único desatualizado (${percDesatualizadas.toFixed(2)}%). É fundamental intensificar a busca ativa e mutirões de atualização para garantir o acesso a benefícios e serviços.`);
     }
 
     // Trabalho infantil
     const percTI = safePct(dados["fam_trabalho_infantil_mun"], nFamCad);
     if (percTI >= 3) {
-        alerts.push(`🔴 **Trabalho infantil:** ${formatNumber(dados["fam_trabalho_infantil_mun"])} famílias estão em situação de trabalho infantil (${percTI.toFixed(2)}%). O CRAS deve priorizar abordagens intersetoriais com foco em proteção e reintegração escolar.`);
+        alertsCritico.push(`🔴 **Trabalho infantil:** ${formatNumber(dados["fam_trabalho_infantil_mun"])} famílias estão em situação de trabalho infantil (${percTI.toFixed(2)}%). O CRAS deve priorizar abordagens intersetoriais com foco em proteção e reintegração escolar.`);
     }
 
     // Violência
     const totalViolencia = ["viol_fisica_0a9", "viol_psicologica_0a9", "viol_sexual_0a9", "neglig_abandono_0a9"].reduce((sum, key) => sum + (parseNumberFlexible(dados[key]) || 0), 0);
     if (totalViolencia >= 5) {
-        alerts.push(`🔴 **Violações de direitos:** Foram registrados ${formatNumber(totalViolencia)} casos graves de violência contra crianças. É urgente o fortalecimento dos fluxos com o Conselho Tutelar e a rede de proteção.`);
+        alertsCritico.push(`🔴 **Violações de direitos:** Foram registrados ${formatNumber(totalViolencia)} casos graves de violência contra crianças. É urgente o fortalecimento dos fluxos com o Conselho Tutelar e a rede de proteção.`);
     }
 
-    // GPTE
-    const percGPTE = safePct(dados["fam-gpte-0a6"], fam0a6);
-    if (percGPTE >= 20) {
-        alerts.push(`🟡 **Territórios prioritários:** ${percGPTE.toFixed(2)}% das famílias com crianças pequenas vivem em áreas com Grandes Problemas e Tradições Específicas (GPTE). O planejamento do CRAS deve priorizar esses territórios com estratégias específicas.`);
-    }
-
-    // Additional recommended alert: high share of families without employed members
+    // Risco socioeconômico elevado
     const percSemEmprego = safePct(dados["fam-0a6-sem-ocupado_mun"], fam0a6);
     if (percSemEmprego >= 40) {
-        alerts.push(`🔴 **Risco socioeconômico elevado:** ${percSemEmprego.toFixed(2)}% das famílias com crianças pequenas não possuem nenhum integrante ocupado. Priorizar ações de inclusão produtiva e proteção social.`);
+        alertsCritico.push(`🔴 **Risco socioeconômico elevado:** ${percSemEmprego.toFixed(2)}% das famílias com crianças pequenas não possuem nenhum integrante ocupado. Priorizar ações de inclusão produtiva e proteção social.`);
+    }
+
+    // 🟠 ATENÇÃO
+    // Frequência escolar e acesso à educação
+    const percForaEscola = safePct(dados["fam-4a6-fora-escola_mun"], fam0a6);
+    if (percForaEscola >= 5) {
+        alertsAtencao.push(`🟠 **Frequência escolar:** ${percForaEscola.toFixed(2)}% das famílias com crianças de 4 a 6 anos estão fora da escola. Recomenda-se articulação imediata com a rede de educação para identificar causas e encaminhar soluções.`);
+    }
+
+    // Condicionalidades de saúde
+    const percSemAcompNutri = safePct(dados["nao_acomp_nutricional_0a7"], dados["fam_pbf_0a6"]);
+    if (percSemAcompNutri >= 25) {
+        alertsAtencao.push(`🟠 **Condicionalidade de nutrição:** ${percSemAcompNutri.toFixed(2)}% das famílias com crianças pequenas beneficiárias do PBF estão sem acompanhamento nutricional registrado. CRAS e Saúde devem alinhar estratégias para garantir essa cobertura.`);
+    }
+
+    const percSemVacina = safePct(dados["nao_vacinacao_0a7"], dados["fam_pbf_0a6"]);
+    if (percSemVacina >= 20) {
+        alertsAtencao.push(`🟠 **Vacinação incompleta:** ${percSemVacina.toFixed(2)}% das famílias com crianças pequenas no PBF apresentam atraso vacinal. Reforçar o acompanhamento conjunto com a Atenção Básica.`);
+    }
+
+    // Baixa alfabetização
+    const percSemLer = safePct(dados["fam-0a6-sem-ler_mun"], fam0a6);
+    if (percSemLer >= 15) {
+        alertsAtencao.push(`🟠 **Baixa alfabetização:** ${percSemLer.toFixed(2)}% das famílias com crianças pequenas não possuem nenhum membro alfabetizado. Recomenda-se articulação com programas de alfabetização e educação de jovens e adultos.`);
+    }
+
+    // 🟡 MONITORAMENTO
+    // GPTE
+    const percGPTE = safePct(dados["fam-gpte-0a6_mun"], fam0a6);
+    if (percGPTE >= 20) {
+        alertsMonitoramento.push(`🟡 **Grupos Populacionais Tradicionais e Específicos (GPTE):** ${percGPTE.toFixed(2)}% das famílias com crianças pequenas vivem em territórios GPTE. O planejamento do CRAS deve priorizar esses territórios com estratégias específicas.`);
+    }
+
+    // Área rural
+    const percRural = safePct(dados["fam-primeira-infancia-e-area-rural_mun"], fam0a6);
+    if (percRural >= 25) {
+        alertsMonitoramento.push(`🟡 **Área rural:** ${percRural.toFixed(2)}% das famílias com crianças pequenas vivem em áreas rurais. Estratégias de atendimento devem considerar as especificidades territoriais e de acesso a serviços.`);
+    }
+
+    // Crianças com deficiência
+    const percPCD = safePct(dados["fam-0a6-pcd-cuidados_mun"], fam0a6);
+    if (percPCD >= 5) {
+        alertsMonitoramento.push(`🟡 **Crianças com deficiência:** ${percPCD.toFixed(2)}% das famílias com crianças pequenas possuem crianças com deficiência que demandam cuidados. Garantir acesso prioritário aos serviços e acompanhamento especializado.`);
     }
 
     // Generate final text
     let texto = `**🔎 Bloco Final – Alertas e Prioridades para Ação Intersetorial**\n\n`;
     texto += `A seguir, apresentamos os principais alertas identificados com base nos dados do município. Eles representam **sinais de alerta para o planejamento territorial do CRAS**, indicando pontos críticos que demandam atenção imediata ou monitoramento contínuo.\n\n`;
 
-    if (alerts.length === 0) {
-        texto += `✅ Não foram identificados alertas críticos com os dados disponíveis. Ainda assim, recomenda-se manter o monitoramento ativo e revisar os protocolos de acompanhamento das famílias com crianças pequenas.\n\n`;
+    // Legenda
+    texto += `**📊 Legenda de Criticidade:**\n\n`;
+    texto += `🔴 **Crítico:** Situações que demandam ação imediata e articulação prioritária\n`;
+    texto += `🟠 **Atenção:** Situações que requerem intervenção em curto prazo\n`;
+    texto += `🟡 **Monitoramento:** Situações que exigem acompanhamento contínuo\n`;
+    texto += `✅ **Estável:** Nenhum alerta identificado nos critérios estabelecidos\n\n`;
+    texto += `---\n\n`;
+
+    const totalAlertas = alertsCritico.length + alertsAtencao.length + alertsMonitoramento.length;
+
+    if (totalAlertas === 0) {
+        texto += `✅ **Status: Estável**\n\n`;
+        texto += `Não foram identificados alertas críticos com os dados disponíveis. Ainda assim, recomenda-se manter o monitoramento ativo e revisar os protocolos de acompanhamento das famílias com crianças pequenas.\n\n`;
     } else {
-        alerts.forEach((alert) => {
-            texto += `${alert}\n\n`;
-        });
+        // Resumo quantitativo
+        texto += `**📈 Resumo de Alertas Identificados:**\n\n`;
+        if (alertsCritico.length > 0) {
+            texto += `🔴 Crítico: ${alertsCritico.length} alerta(s)\n`;
+        }
+        if (alertsAtencao.length > 0) {
+            texto += `🟠 Atenção: ${alertsAtencao.length} alerta(s)\n`;
+        }
+        if (alertsMonitoramento.length > 0) {
+            texto += `🟡 Monitoramento: ${alertsMonitoramento.length} alerta(s)\n`;
+        }
+        texto += `\n**Total: ${totalAlertas} alerta(s)**\n\n`;
+        texto += `---\n\n`;
+
+        // Alertas críticos
+        if (alertsCritico.length > 0) {
+            texto += `**🔴 ALERTAS CRÍTICOS** (${alertsCritico.length})\n\n`;
+            alertsCritico.forEach((alert) => {
+                texto += `${alert}\n\n`;
+            });
+            texto += `---\n\n`;
+        }
+
+        // Alertas de atenção
+        if (alertsAtencao.length > 0) {
+            texto += `**🟠 ALERTAS DE ATENÇÃO** (${alertsAtencao.length})\n\n`;
+            alertsAtencao.forEach((alert) => {
+                texto += `${alert}\n\n`;
+            });
+            texto += `---\n\n`;
+        }
+
+        // Alertas de monitoramento
+        if (alertsMonitoramento.length > 0) {
+            texto += `**🟡 ALERTAS DE MONITORAMENTO** (${alertsMonitoramento.length})\n\n`;
+            alertsMonitoramento.forEach((alert) => {
+                texto += `${alert}\n\n`;
+            });
+            texto += `---\n\n`;
+        }
+
+        // Resumo final
+        texto += `**💡 Considerações Finais**\n\n`;
+        texto += `Este diagnóstico identificou **${totalAlertas} situação(ões)** que demandam atenção do CRAS e da rede intersetorial. `;
+        if (alertsCritico.length > 0) {
+            texto += `Especialmente os **${alertsCritico.length} alerta(s) crítico(s)** requerem ação imediata e coordenada. `;
+        }
+        texto += `Recomenda-se a elaboração de um plano de ação territorial que priorize essas famílias e articule respostas integradas entre assistência social, saúde, educação e demais políticas públicas.\n\n`;
     }
 
     return texto;
@@ -507,9 +610,6 @@ document.getElementById('fileInput').addEventListener('change', async function (
                     if (!isNaN(num)) dados['fam_pbf_0a6'] = num;
                 }
             }
-
-            // Collect mapping info for debug (not shown)
-            const mappedKeys = header.map(h => ({ raw: h, mapped: canonicalKeyFromHeader(h) || null }));
 
                     console.log('Dados processados:', dados);
                     // keep last parsed dados for report generation
